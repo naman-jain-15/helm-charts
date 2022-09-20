@@ -47,6 +47,8 @@ securityContext: {}
 service:
   type: NodePort
   port: 80
+  extra:
+    port: 4319
   http:
     port: 4318
   grpc:
