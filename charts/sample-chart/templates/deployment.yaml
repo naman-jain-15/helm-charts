@@ -38,9 +38,9 @@ spec:
             - start
           env:
             - name: TARGET
-              value: {{ .Values.mw.env.target }}
+              value: {{ .Values.mw.target }}
             - name: MW_API_KEY
-              value: {{ .Values.mw.env.key }}
+              value: {{ .Values.mw.apiKey }}
           # ports:
           #   - name: http
           #     containerPort: 4318

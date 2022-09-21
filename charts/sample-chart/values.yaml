@@ -3,9 +3,8 @@
 # Declare variables to be passed into your templates.
 
 mw:
-  env:
-    target: us1-v1-grpc.middleware.io:443
-    key: evaddjfmazsdz8qip2cxva99muxv30wq6g6c
+  target: MW_TARGET
+  apiKey: MW_API_KEY
 
 replicaCount: 1
 
