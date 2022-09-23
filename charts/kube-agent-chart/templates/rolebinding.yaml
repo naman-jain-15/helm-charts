@@ -9,5 +9,5 @@ roleRef:
   name: mw-role
 subjects:
   - kind: ServiceAccount
-    name: {{ include "sample-chart.serviceAccountName" . }}
+    name: {{ include "kube-agent-chart.serviceAccountName" . }}
 {{- end }}

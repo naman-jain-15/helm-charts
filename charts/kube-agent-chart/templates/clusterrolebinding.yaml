@@ -10,6 +10,6 @@ roleRef:
   name: mw-cluster-role-helm
 subjects:
   - kind: ServiceAccount
-    name: {{ include "sample-chart.serviceAccountName" . }}
+    name: {{ include "kube-agent-chart.serviceAccountName" . }}
     namespace: default
 {{- end }}

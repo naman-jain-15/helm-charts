@@ -3,7 +3,7 @@ kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   labels:
-    {{- include "sample-chart.labels" . | nindent 4 }}
+    {{- include "kube-agent-chart.labels" . | nindent 4 }}
   name: mw-cluster-role-helm
 rules:
   # Allow Metrics Scraper to get metrics from the Metrics server

@@ -3,7 +3,7 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   labels:
-    {{- include "sample-chart.labels" . | nindent 4 }}
+    {{- include "kube-agent-chart.labels" . | nindent 4 }}
   name: mw-role
 rules:
   # Allow Dashboard to get, update and delete Dashboard exclusive secrets.
