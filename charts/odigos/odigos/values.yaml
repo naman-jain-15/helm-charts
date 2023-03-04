@@ -1,23 +1,23 @@
 autoscaler:
   image:
-  # docker pull ghcr.io/middleware-labs/odigos-odiglet:middleware-test-0.0.1
-    repository: ghcr.io/middleware-labs/odigos-autoscaler:middleware-test-0.0.1
-    tag: v0.1.44
+  # docker pull ghcr.io/middleware-labs/odigos-odiglet
+    repository: ghcr.io/middleware-labs/odigos-autoscaler
+    tag: middleware-test-0.0.1
 
 scheduler:
   image:
-    repository: ghcr.io/middleware-labs/odigos-scheduler:middleware-test-0.0.1
-    tag: v0.1.44
+    repository: ghcr.io/middleware-labs/odigos-scheduler
+    tag: middleware-test-0.0.1
 
 langDetector:
   image:
-    repository: ghcr.io/middleware-labs/odigos-lang-detector:middleware-test-0.0.1
-    tag: v0.1.44
+    repository: ghcr.io/middleware-labs/odigos-lang-detector
+    tag: middleware-test-0.0.1
 
 ui:
   image:
-    repository: ghcr.io/middleware-labs/odigos-ui:middleware-test-0.0.1
-    tag: v0.1.44
+    repository: ghcr.io/middleware-labs/odigos-ui
+    tag: middleware-test-0.0.1
 
 instrumentor:
   deleteLangDetectionPods: true
@@ -29,13 +29,13 @@ instrumentor:
     - istio-system
     - linkerd
   image:
-    repository: ghcr.io/middleware-labs/odigos-instrumentor:middleware-test-0.0.1
-    tag: v0.1.44
+    repository: ghcr.io/middleware-labs/odigos-instrumentor
+    tag: middleware-test-0.0.1
 
 odiglet:
   image:
-    repository: ghcr.io/middleware-labs/odigos-odiglet:middleware-test-0.0.1
-    tag: v0.1.44
+    repository: ghcr.io/middleware-labs/odigos-odiglet
+    tag: middleware-test-0.0.1
 
 telemetry:
   enabled: true
