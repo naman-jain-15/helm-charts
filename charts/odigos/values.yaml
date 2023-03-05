@@ -35,6 +35,3 @@ odiglet:
   image:
     repository: ghcr.io/middleware-labs/odigos-odiglet
     tag: middleware-test-0.0.1
-
-telemetry:
-  enabled: true
