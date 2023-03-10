@@ -16,7 +16,7 @@ langDetector:
 ui:
   image:
     repository: ghcr.io/middleware-labs/odigos-ui
-    tag: middleware-test-0.0.5
+    tag: middleware-test-0.0.6
 
 instrumentor:
   deleteLangDetectionPods: true
