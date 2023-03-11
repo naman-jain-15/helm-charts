@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    odigos.io/skip: "true"
+    vision.middleware.io/skip: "true"
   labels:
     app: odigos-instrumentor
   name: odigos-instrumentor

@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: odiglet
+  name: visioncart
   namespace: {{ .Release.Namespace }}
   labels:
-    app: odiglet
+    app: visioncart
 spec:
   selector:
     matchLabels:
-      app: odiglet
+      app: visioncart
   template:
     metadata:
       labels:
-        app: odiglet
+        app: visioncart
     spec:
       nodeSelector:
         kubernetes.io/os: linux
@@ -21,7 +21,7 @@ spec:
           operator: Equal
           value: windows
           effect: NoSchedule
-      serviceAccountName: odiglet
+      serviceAccountName: visioncart
       hostNetwork: true
       hostPID: true
       dnsPolicy: ClusterFirstWithHostNet
@@ -30,8 +30,8 @@ spec:
 {{ toYaml .Values.imagePullSecrets | indent 6 }}
 {{- end }}
       containers:
-        - name: odiglet
-          image: "{{ .Values.odiglet.image.repository }}:{{ .Values.odiglet.image.tag }}"
+        - name: visioncart
+          image: "{{ .Values.visioncart.image.repository }}:{{ .Values.visioncart.image.tag }}"
           imagePullPolicy: IfNotPresent
           env:
             - name: NODE_NAME

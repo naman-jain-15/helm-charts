@@ -1,7 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: odigos-ui
+  name: vision-ui
   namespace: {{ .Release.Namespace }}
 rules:
 - apiGroups:
@@ -17,7 +17,7 @@ rules:
     - update
     - watch
 - apiGroups:
-    - odigos.io
+    - vision.middleware.io
   resources:
     - collectorsgroups
   verbs:
@@ -29,13 +29,13 @@ rules:
     - update
     - watch
 - apiGroups:
-    - odigos.io
+    - vision.middleware.io
   resources:
     - collectorsgroups/finalizers
   verbs:
     - update
 - apiGroups:
-    - odigos.io
+    - vision.middleware.io
   resources:
     - collectorsgroups/status
   verbs:
@@ -43,7 +43,7 @@ rules:
     - patch
     - update
 - apiGroups:
-    - odigos.io
+    - vision.middleware.io
   resources:
     - destinations
   verbs:
@@ -55,13 +55,13 @@ rules:
     - update
     - watch
 - apiGroups:
-    - odigos.io
+    - vision.middleware.io
   resources:
     - destinations/finalizers
   verbs:
     - update
 - apiGroups:
-    - odigos.io
+    - vision.middleware.io
   resources:
     - destinations/status
   verbs:
@@ -69,7 +69,7 @@ rules:
     - patch
     - update
 - apiGroups:
-    - odigos.io
+    - vision.middleware.io
   resources:
     - odigosconfigurations
   verbs:
@@ -81,7 +81,7 @@ rules:
     - update
     - watch
 - apiGroups:
-    - odigos.io
+    - vision.middleware.io
   resources:
     - odigosconfigurations/finalizers
   verbs:

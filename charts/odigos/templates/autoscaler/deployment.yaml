@@ -2,22 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    odigos.io/skip: "true"
+    vision.middleware.io/skip: "true"
   labels:
-    app: odigos-autoscaler
-  name: odigos-autoscaler
+    app: vision-autoscaler
+  name: vision-autoscaler
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: odigos-autoscaler
+      app: vision-autoscaler
   template:
     metadata:
       annotations:
         kubectl.kubernetes.io/default-container: manager
       labels:
-        app: odigos-autoscaler
+        app: vision-autoscaler
     spec:
 {{- if .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -71,7 +71,7 @@ spec:
           allowPrivilegeEscalation: false
       securityContext:
         runAsNonRoot: true
-      serviceAccountName: odigos-autoscaler
+      serviceAccountName: vision-autoscaler
       terminationGracePeriodSeconds: 10
       nodeSelector:
         kubernetes.io/os: linux

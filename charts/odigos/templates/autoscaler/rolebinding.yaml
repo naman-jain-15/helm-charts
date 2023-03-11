@@ -1,12 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: odigos-autoscaler
+  name: vision-autoscaler
   namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: odigos-autoscaler
+  name: vision-autoscaler
 subjects:
 - kind: ServiceAccount
-  name: odigos-autoscaler
+  name: vision-autoscaler

@@ -1,12 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: odigos-scheduler
+  name: vision-scheduler
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: odigos-scheduler
+  name: vision-scheduler
 subjects:
   - kind: ServiceAccount
-    name: odigos-scheduler
+    name: vision-scheduler
     namespace: {{ .Release.Namespace }}
