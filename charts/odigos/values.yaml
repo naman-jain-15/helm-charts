@@ -1,7 +1,7 @@
 autoscaler:
   image:
     repository: ghcr.io/middleware-labs/odigos-autoscaler
-    tag: middleware-test-0.0.14
+    tag: middleware-test-0.0.15
 
 scheduler:
   image:
