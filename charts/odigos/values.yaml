@@ -6,7 +6,7 @@ autoscaler:
 scheduler:
   image:
     repository: ghcr.io/middleware-labs/vision-scheduler
-    tag: middleware-test-0.0.4
+    tag: middleware-test-0.0.5
 
 langDetector:
   image:
