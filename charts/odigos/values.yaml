@@ -1,12 +1,12 @@
 autoscaler:
   image:
     repository: ghcr.io/middleware-labs/vision-autoscaler
-    tag: middleware-test-0.0.22
+    tag: middleware-test-0.0.23
 
 scheduler:
   image:
     repository: ghcr.io/middleware-labs/vision-scheduler
-    tag: middleware-test-0.0.5
+    tag: middleware-test-0.0.3
 
 langDetector:
   image:
