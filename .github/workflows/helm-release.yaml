@@ -27,6 +27,15 @@ jobs:
         uses: azure/setup-helm@v1
         with:
           version: v3.8.1
+      
+      - name: Copy MinIO chart
+        run: |
+          mkdir -p /tmp/chart
+          cp ./charts/phlare/charts/minio-*.tgz /tmp/chart/minio.tgz
+
+      - name: Upload chart
+        run: |
+          helm chart save /tmp/chart/minio.tgz min
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.4.0
