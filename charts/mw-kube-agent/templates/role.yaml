@@ -3,13 +3,14 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   labels:
-    {{- include "kube-agent-chart.labels" . | nindent 4 }}
-  name: mw-role
+    {{- include "mw-kube-agent.labels" . | nindent 4 }}
+  name: {{ .Values.role.name }}
+  namespace: {{.Values.namespace.name}}
 rules:
   # Allow Dashboard to get, update and delete Dashboard exclusive secrets.
   - apiGroups: [""]
     resources: ["secrets"]
-    resourceNames: ["mw-app-key-holder", "mw-app-certs", "mw-app-csrf"]
+    resourceNames: [{{ .Values.secret.certSecretName }}, {{ .Values.secret.csrfSecretName }}, {{ .Values.secret.keyHolderSecretName }}]
     verbs: ["get", "update", "delete"]
   - apiGroups: [""]
     resources: ["pods", "pods/exec"]
@@ -17,7 +18,7 @@ rules:
     # Allow Dashboard to get and update 'mw-app-settings' config map.
   - apiGroups: [""]
     resources: ["configmaps"]
-    resourceNames: ["mw-app-settings"]
+    resourceNames: [{{ .Values.configMap.name }}]
     verbs: ["get", "update"]
   - apiGroups: [""]
     resources: ["nodes"]
