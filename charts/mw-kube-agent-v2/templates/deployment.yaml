@@ -1,0 +1,61 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: {{ .Values.deployment.name }}
+  namespace: {{.Values.namespace.name}}
+spec:
+  selector:
+    matchLabels:
+      {{- include ".Values.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include ".Values.selectorLabels" . | nindent 8 }}
+    spec:
+      tolerations:
+      # these tolerations are to have the daemonset runnable on control plane nodes
+      # remove them if your control plane nodes should not run pods
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      - operator: Exists
+        effect: NoSchedule
+      - operator: Exists
+        effect: NoExecute
+
+      volumes:
+        - name: mw-deployment-otel-config-volume
+          configMap:
+            name: mw-deployment-otel-config
+            items:
+              - key: otel-config
+                path: otel-config-deployment.yaml
+      containers:
+        - args:
+            - mw-agent
+            - start
+            - --otel-config-file
+            - /app/otel-config-deployment.yaml
+          volumeMounts:
+            - name: mw-deployment-otel-config-volume
+              mountPath: /app
+          env:
+            - name: MW_TARGET
+              value: {{ .Values.mw.target }}
+            - name: MW_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: middleware-secret
+                  key: api-key
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          name: {{ .Chart.Name }}
+          securityContext:
+            privileged: true
+      restartPolicy: Always
+      serviceAccountName: {{ include "mw-kube-agent.serviceAccountName" . }}
