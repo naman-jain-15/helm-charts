@@ -29,13 +29,13 @@ spec:
                 - name: MW_TARGET
                   value: {{ .Values.mw.target }}
                 - name: MW_API_URL_FOR_CONFIG_CHECK
-                  value: ""
+                  value: {{ .Values.apiUrlForConfigCheck }}
                 - name: MW_CONFIG_CHECK_INTERVAL
                   value: "60s"
                 - name: MW_KUBE_CLUSTER_NAME
                   value: {{ .Values.clusterMetadata.name }}
                 - name: MW_API_KEY
-                  value: {{ .Values.mw.apikey }}
+                  value: {{ .Values.mw.apiKey }}
               securityContext:
                 privileged: true
           restartPolicy: OnFailure

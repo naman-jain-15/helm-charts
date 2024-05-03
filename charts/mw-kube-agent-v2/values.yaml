@@ -33,6 +33,8 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: mw-service-account
 
+apiUrlForConfigCheck: https://app.middleware.io
+
 namespace:
   name: mw-agent-ns
   
