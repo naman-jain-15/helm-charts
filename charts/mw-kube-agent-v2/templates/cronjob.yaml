@@ -29,11 +29,11 @@ spec:
                 - name: MW_TARGET
                   value: {{ .Values.mw.target }}
                 - name: MW_API_URL_FOR_CONFIG_CHECK
-                  value: "MW_API_URL_FOR_CONFIG_CHECK_VALUE"
+                  value: ""
                 - name: MW_CONFIG_CHECK_INTERVAL
-                  value: "MW_CONFIG_CHECK_INTERVAL_VALUE"
+                  value: "60s"
                 - name: MW_KUBE_CLUSTER_NAME
-                  value: "MW_KUBE_CLUSTER_NAME_VALUE"
+                  value: {{ .Values.clusterMetadata.name }}
                 - name: MW_API_KEY
                   value: {{ .Values.mw.apikey }}
               securityContext:
