@@ -113,7 +113,7 @@ data:
         attributes:
           - key: k8s.cluster.name
             action: update
-            value: ${MW_KUBE_CLUSTER_NAME}
+            value: {{ .Values.clusterMetadata.name }}
           - key: host.id
             action: update
             from_attribute: k8s.node.name

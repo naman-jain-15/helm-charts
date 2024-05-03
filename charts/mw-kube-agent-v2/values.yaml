@@ -6,6 +6,9 @@ mw:
   target: XXXXXXXXX
   apiKey: XXXXXXXXX
 
+clusterMetadata:
+  name: "unknown"
+
 replicaCount: 1
 
 image:
