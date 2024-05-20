@@ -4,7 +4,7 @@ metadata:
   name: mw-kube-agent-update
   namespace: {{.Values.namespace.name}}
 spec:
-  schedule: "*/1 * * * *"  # Adjust the schedule as needed
+  schedule: "{{ .Values.mw.configCheckInterval }}"  # Adjust the schedule as needed
   jobTemplate:
     spec:
       template:

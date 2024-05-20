@@ -5,6 +5,7 @@
 mw:
   target: XXXXXXXXX
   apiKey: XXXXXXXXX
+  configCheckInterval: "*/1 * * * *"
 
 clusterMetadata:
   name: "unknown"
