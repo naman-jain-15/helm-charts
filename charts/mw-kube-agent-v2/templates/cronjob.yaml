@@ -21,7 +21,7 @@ spec:
           containers:
             - name: mw-kube-agent
               image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-              imagePullPolicy: Always
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
               args:
                 - mw-agent
                 - update
@@ -34,6 +34,8 @@ spec:
                   value: "60s"
                 - name: MW_KUBE_CLUSTER_NAME
                   value: {{ .Values.clusterMetadata.name }}
+                - name: MW_NAMESPACE
+                  value: {{ .Values.namespace.name }}
                 - name: MW_API_KEY
                   value: {{ .Values.mw.apiKey }}
               securityContext:

@@ -47,6 +47,8 @@ spec:
               value: {{ .Values.mw.target }}
             - name: MW_KUBE_CLUSTER_NAME
               value: {{ .Values.clusterMetadata.name }}
+            - name: MW_NAMESPACE
+              value: {{ .Values.namespace.name }}
             - name: MW_API_KEY
               valueFrom:
                 secretKeyRef:
