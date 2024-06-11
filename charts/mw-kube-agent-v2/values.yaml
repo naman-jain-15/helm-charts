@@ -6,6 +6,12 @@ mw:
   target: XXXXXXXXX
   apiKey: XXXXXXXXX
   configCheckInterval: "*/1 * * * *"
+  apiUrlForConfigCheck: https://app.middleware.io
+  dockerEndpoint: "unix:///var/run/docker.sock"
+  selfProfiling: false
+  profilingServerUrl: "https://profiling.middleware.io"
+  agentFeatures:
+    infraMonitoring: true
 
 clusterMetadata:
   name: "unknown"
@@ -16,7 +22,7 @@ image:
   repository: ghcr.io/middleware-labs/mw-kube-agent
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 1.6.4
+  tag: 1.6.6
 
 imagePullSecrets: []
 nameOverride: ""
@@ -33,8 +39,6 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: mw-service-account
-
-apiUrlForConfigCheck: https://app.middleware.io
 
 namespace:
   name: mw-agent-ns

@@ -49,6 +49,12 @@ spec:
               value: {{ .Values.clusterMetadata.name }}
             - name: MW_NAMESPACE
               value: {{ .Values.namespace.name }}
+            - name: MW_AGENT_FEATURES_INFRA_MONITORING
+              value: {{ .Values.mw.agentFeatures.infraMonitoring }}
+            - name: MW_AGENT_SELF_PROFILING
+              value: {{ .Values.mw.selfProfiling }}
+            - name: MW_PROFILING_SERVER_URL
+              value: {{ .Values.mw.profilingServerUrl }}
             - name: MW_API_KEY
               valueFrom:
                 secretKeyRef:

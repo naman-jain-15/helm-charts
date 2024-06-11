@@ -29,15 +29,16 @@ spec:
                 - name: MW_TARGET
                   value: {{ .Values.mw.target }}
                 - name: MW_API_URL_FOR_CONFIG_CHECK
-                  value: {{ .Values.apiUrlForConfigCheck }}
-                - name: MW_CONFIG_CHECK_INTERVAL
-                  value: "60s"
+                  value: {{ .Values.mw.apiUrlForConfigCheck }}
                 - name: MW_KUBE_CLUSTER_NAME
                   value: {{ .Values.clusterMetadata.name }}
                 - name: MW_NAMESPACE
                   value: {{ .Values.namespace.name }}
                 - name: MW_API_KEY
-                  value: {{ .Values.mw.apiKey }}
+                  valueFrom:
+                    secretKeyRef:
+                      name: middleware-secret
+                      key: api-key
               securityContext:
                 privileged: true
           restartPolicy: OnFailure
