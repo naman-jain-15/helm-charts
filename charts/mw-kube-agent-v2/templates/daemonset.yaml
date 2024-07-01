@@ -55,19 +55,19 @@ spec:
           - /app/otel-config-daemonset.yaml
           env:
             - name: MW_TARGET
-              value: {{ .Values.mw.target }}
+              value: {{ .Values.mw.target | quote }}
             - name: MW_KUBE_CLUSTER_NAME
-              value: {{ .Values.clusterMetadata.name }}
+              value: {{ .Values.clusterMetadata.name | quote }}
             - name: MW_NAMESPACE
-              value: {{ .Values.namespace.name }}
+              value: {{ .Values.namespace.name | quote }}
             - name: MW_DOCKER_ENDPOINT
-              value: {{ .Values.mw.dockerEndpoint }}
+              value: {{ .Values.mw.dockerEndpoint | quote }}
             - name: MW_AGENT_FEATURES_INFRA_MONITORING
-              value: {{ .Values.mw.agentFeatures.infraMonitoring }}
+              value: {{ .Values.mw.agentFeatures.infraMonitoring | quote }}
             - name: MW_AGENT_SELF_PROFILING
-              value: {{ .Values.mw.selfProfiling }}
+              value: {{ .Values.mw.selfProfiling | quote }}
             - name: MW_PROFILING_SERVER_URL
-              value: {{ .Values.mw.profilingServerUrl }}
+              value: {{ .Values.mw.profilingServerUrl | quote}}
             - name: MW_API_KEY
               valueFrom:
                 secretKeyRef:
