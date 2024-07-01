@@ -67,7 +67,7 @@ spec:
             - name: MW_AGENT_SELF_PROFILING
               value: {{ .Values.mw.selfProfiling }}
             - name: MW_PROFILING_SERVER_URL
-              value: {{ .Value.profilingServerUrl }}
+              value: {{ .Values.mw.profilingServerUrl }}
             - name: MW_API_KEY
               valueFrom:
                 secretKeyRef:
