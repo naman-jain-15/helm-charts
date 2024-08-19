@@ -48,4 +48,11 @@ rules:
   - apiGroups: ["rbac.authorization.k8s.io"]
     resources: ["clusterrolebindings", "clusterroles", "roles", "rolebindings", ]
     verbs: ["get", "list", "watch"]
+  {{- if .Values.mw.apiKeyFromExistingSecret.enabled }}
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get"]
+    resourceNames:
+      - {{ .Values.mw.apiKeyFromExistingSecret.name }}
+  {{- end }}
 {{- end }}

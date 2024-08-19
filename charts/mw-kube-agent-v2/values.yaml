@@ -12,6 +12,10 @@ mw:
   profilingServerUrl: "https://profiling.middleware.io"
   agentFeatures:
     infraMonitoring: true
+  apiKeyFromExistingSecret:
+    enabled: false
+    name: existing-secret
+    key: existing-secret-key
 
 clusterMetadata:
   name: "unknown"
