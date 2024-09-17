@@ -68,11 +68,19 @@ spec:
               value: {{ .Values.mw.selfProfiling | quote }}
             - name: MW_PROFILING_SERVER_URL
               value: {{ .Values.mw.profilingServerUrl | quote}}
+            {{- if .Values.mw.apiKeyFromExistingSecret.enabled }}
+            - name: MW_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.mw.apiKeyFromExistingSecret.name }}
+                  key: {{ .Values.mw.apiKeyFromExistingSecret.key }}
+            {{- else }}
             - name: MW_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: middleware-secret
                   key: api-key
+            {{- end }}
           resources:
           {{- toYaml .Values.resources | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
