@@ -34,11 +34,19 @@ spec:
                   value: {{ .Values.clusterMetadata.name }}
                 - name: MW_NAMESPACE
                   value: {{ .Values.namespace.name }}
+                {{- if .Values.mw.apiKeyFromExistingSecret.enabled }}
+                - name: MW_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.mw.apiKeyFromExistingSecret.name }}
+                      key: {{ .Values.mw.apiKeyFromExistingSecret.key }}
+                {{- else }}
                 - name: MW_API_KEY
                   valueFrom:
                     secretKeyRef:
                       name: middleware-secret
                       key: api-key
+                {{- end }}
               securityContext:
                 privileged: true
           restartPolicy: OnFailure
