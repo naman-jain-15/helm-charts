@@ -68,7 +68,7 @@ clusterRoleBinding:
   name: mw-cluster-role-binding
 
 service:
-  name: mw-kube-agent-svc
+  name: mw-service
   type: NodePort
   http:
     port: 9320
