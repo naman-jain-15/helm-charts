@@ -84,9 +84,9 @@ spec:
           resources:
           {{- toYaml .Values.resources | nindent 12 }}
             - name: K8S_NODE_NAME
-                valueFrom:
-                  fieldRef:
-                    fieldPath: spec.nodeName
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
             - name: K8S_NODE_IP
               valueFrom:
                 fieldRef:
