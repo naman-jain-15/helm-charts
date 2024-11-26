@@ -28,7 +28,7 @@ data:
               - output: parser-containerd
                 expr: 'body matches "^[^ Z]+Z"'
           # Parse CRI-O format
-          - type: regex_parser
+          - type: regex_parsder
             id: parser-crio
             regex: '^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) ?(?P<log>.*)$'
             output: extract_metadata_from_filepath
