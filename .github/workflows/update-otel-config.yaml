@@ -60,8 +60,8 @@ jobs:
           git clone https://.:${{ secrets.TRIAL_VAL }}@github.com/middleware-labs/install.middleware.io.git
           cd install.middleware.io
 
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.email "naman.jain@middleware.io"
+          git config --global user.name "naman-jain-15"
 
           # Create new branch
           BRANCH_NAME="update-otel-config-$(date +%Y%m%d-%H%M%S)"
