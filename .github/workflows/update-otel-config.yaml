@@ -56,14 +56,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.TRIAL_VAL }}
         run: |
-
+          git config --global url."https://${{ secrets.TRIAL_VAL }}:@github.com/".insteadOf "https://github.com/"
           git config --global user.email "naman.jain@middleware.io"
           git config --global user.name "naman-jain-15"
 
           git clone https://.:${{ secrets.TRIAL_VAL }}@github.com/middleware-labs/install.middleware.io.git
           cd install.middleware.io
-
-
 
           # Create new branch
           BRANCH_NAME="update-otel-config-$(date +%Y%m%d-%H%M%S)"
@@ -83,9 +81,8 @@ jobs:
 
           #git push "https://${GH_TOKEN}@github.com/middleware-labs/install.middleware.io.git" $BRANCH_NAME
           #fatal: could not read Password for 'https://***@github.com': No such device or address
-
-          git config credential.helper store
-          echo "https://oauth2:${GH_TOKEN}@github.com" > ~/.git-credentials
+          git remote -v
+          git remote show origin
           git push origin $BRANCH_NAME
 
           #git push -u origin $BRANCH_NAME
