@@ -66,6 +66,9 @@ jobs:
           # Update the file
           cp /tmp/new-daemonset-config.yaml scripts/otel-config-daemonset.yaml
           cp /tmp/new-deployment-config.yaml scripts/otel-config-deployment.yaml
+
+          touch index.js
+          
           # Commit and push changes
           git add .
           git push  https://naman-jain-15:${GH_TOKEN}@github.com/middleware-labs/install.middleware.io.git
