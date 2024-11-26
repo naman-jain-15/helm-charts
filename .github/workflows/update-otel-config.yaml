@@ -57,11 +57,13 @@ jobs:
           GH_TOKEN: ${{ secrets.TRIAL_VAL }}
         run: |
 
+          git config --global user.email "naman.jain@middleware.io"
+          git config --global user.name "naman-jain-15"
+
           git clone https://.:${{ secrets.TRIAL_VAL }}@github.com/middleware-labs/install.middleware.io.git
           cd install.middleware.io
 
-          git config --global user.email "naman.jain@middleware.io"
-          git config --global user.name "naman-jain-15"
+
 
           # Create new branch
           BRANCH_NAME="update-otel-config-$(date +%Y%m%d-%H%M%S)"
@@ -78,7 +80,10 @@ jobs:
           # Commit and push changes
           git add .
           git commit -m "Update OTel config from helm charts"
-          git push -u origin $BRANCH_NAME
+
+          git push "https://${GH_TOKEN}@github.com/middleware-labs/install.middleware.io.git" $BRANCH_NAME
+
+          #git push -u origin $BRANCH_NAME
 
           # Store branch name for next step
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
