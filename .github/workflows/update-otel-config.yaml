@@ -56,16 +56,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.TRIAL_VAL }}
         run: |
-          #git config --global url."https://${{ secrets.TRIAL_VAL }}:@github.com/".insteadOf "https://github.com/"
-
           git config --global url."https://${{ secrets.TRIAL_VAL }}@github.com/".insteadOf "https://github.com/"
-
           git config --global user.email "naman.jain@middleware.io"
           git config --global user.name "naman-jain-15"
 
           git clone https://${{ secrets.TRIAL_VAL }}@github.com/middleware-labs/install.middleware.io.git
 
-          #git clone https://.:${{ secrets.TRIAL_VAL }}@github.com/middleware-labs/install.middleware.io.git
           cd install.middleware.io
 
           # Create new branch
@@ -79,23 +75,11 @@ jobs:
           # Set up remote with token
           #git remote remove origin || true
           #git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/middleware-labs/install.middleware.io.git"
-
           # Commit and push changes
           git add .
           git commit -m "Update OTel config from helm charts"
-
-          #git push "https://${GH_TOKEN}@github.com/middleware-labs/install.middleware.io.git" $BRANCH_NAME
-          #fatal: could not read Password for 'https://***@github.com': No such device or address
-          #git remote -v
-          git remote show origin
-
-          git push https://${{ secrets.TRIAL_VAL }}@github.com/middleware-labs/install.middleware.io.git $BRANCH_NAME
-
-          
           git push origin $BRANCH_NAME
-
           #git push -u origin $BRANCH_NAME
-
           # Store branch name for next step
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
