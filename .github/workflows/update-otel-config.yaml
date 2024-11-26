@@ -81,7 +81,12 @@ jobs:
           git add .
           git commit -m "Update OTel config from helm charts"
 
-          git push "https://${GH_TOKEN}@github.com/middleware-labs/install.middleware.io.git" $BRANCH_NAME
+          #git push "https://${GH_TOKEN}@github.com/middleware-labs/install.middleware.io.git" $BRANCH_NAME
+          #fatal: could not read Password for 'https://***@github.com': No such device or address
+
+          git config credential.helper store
+          echo "https://oauth2:${GH_TOKEN}@github.com" > ~/.git-credentials
+          git push origin $BRANCH_NAME
 
           #git push -u origin $BRANCH_NAME
 
