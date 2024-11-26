@@ -82,24 +82,37 @@ jobs:
 
           git status
 
+          git commit -m "otel-config-updated"
 
           git push  https://naman-jain-15:${GH_TOKEN}@github.com/middleware-labs/install.middleware.io.git
           # Store branch name for next step
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.TRIAL_VAL }}
-          branch: ${{ env.BRANCH_NAME }}
-          base: master
+        env:
+            GH_TOKEN: ${{ secrets.TRIAL_VAL }}
+        run: |
+            gh pr create \
+            --repo middleware-labs/install.middleware.io \
+            --base master \
+            --head ${{ env.BRANCH_NAME }} \
+            --title "Update OTel config from helm charts" \
+            --body "Automated PR to update OTel configuration" 
+
+    #   - name: Create Pull Request
+    #     uses: peter-evans/create-pull-request@v6
+    #     with:
+    #       token: ${{ secrets.TRIAL_VAL }}
+    #       branch: ${{ env.BRANCH_NAME }}
+    #       base: master
           
-          title: "Update OTel config from helm charts"
-          body: |
-            Automated PR to update OTel configuration.
+    #       title: "Update OTel config from helm charts"
+    #       body: |
+    #         Automated PR to update OTel configuration.
 
-            Changes triggered by updates to:
-            - configmap-deployment.yaml
-            - configmap-daemonset.yaml
+    #         Changes triggered by updates to:
+    #         - configmap-deployment.yaml
+    #         - configmap-daemonset.yaml
 
-            Please review the changes carefully before merging.
+    #         Please review the changes carefully before merging.
+    
