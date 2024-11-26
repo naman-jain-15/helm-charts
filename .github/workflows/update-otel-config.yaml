@@ -39,12 +39,12 @@ jobs:
           helm template my-release . -s templates/configmap-daemonset.yaml | yq '.data."otel-config"' > /tmp/new-daemonset-config.yaml
           helm template my-release . -s templates/configmap-deployment.yaml | yq '.data."otel-config"' > /tmp/new-deployment-config.yaml
 
-      - name: Checkout target repository
-        uses: actions/checkout@v4
-        with:
-          repository: middleware-labs/install.middleware.io
-          path: target-repo
-          token: ${{ secrets.TRIAL_VAL }}
+      #   - name: Checkout target repository
+      #     uses: actions/checkout@v4
+      #     with:
+      #       repository: middleware-labs/install.middleware.io
+      #       path: target-repo
+      #       token: ${{ secrets.TRIAL_VAL }}
 
       - name: Check Token Permissions
         run: |
@@ -56,8 +56,10 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.TRIAL_VAL }}
         run: |
-          cd target-repo
-          
+
+          git clone https://.:${{ secrets.TRIAL_VAL }}@github.com/middleware-labs/install.middleware.io.git
+          cd install.middleware.io
+
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
 
@@ -68,7 +70,7 @@ jobs:
           # Update the file
           cp /tmp/new-daemonset-config.yaml scripts/otel-config-daemonset.yaml
           cp /tmp/new-deployment-config.yaml scripts/otel-config-deployment.yaml
-          
+
           # Set up remote with token
           git remote remove origin || true
           git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/middleware-labs/install.middleware.io.git"
@@ -80,7 +82,6 @@ jobs:
 
           # Store branch name for next step
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
-
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
