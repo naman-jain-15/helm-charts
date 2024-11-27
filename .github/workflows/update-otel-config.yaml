@@ -1,0 +1,80 @@
+name: Update OTEL Config
+on:
+  pull_request:
+    branches:
+      - otel-configmap-workflow
+    paths:
+      - "charts/mw-kube-agent-v2/templates/configmap-deployment.yaml"
+      - "charts/mw-kube-agent-v2/templates/configmap-daemonset.yaml"
+permissions:
+  contents: write
+
+jobs:
+  update-config:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source repository
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: "latest"
+
+      - name: Install yq
+        run: |
+          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
+
+      - name: Generate new config
+        run: |
+          cd charts/mw-kube-agent-v2
+          helm template my-release . --set 'clusterMetadata.name=${MW_KUBE_CLUSTER_NAME}' -s templates/configmap-daemonset.yaml | yq '.data."otel-config"' > /tmp/new-daemonset-config.yaml
+          helm template my-release . --set 'clusterMetadata.name=${MW_KUBE_CLUSTER_NAME}' -s templates/configmap-deployment.yaml | yq '.data."otel-config"' > /tmp/new-deployment-config.yaml
+
+      - name: Checkout target repository
+        uses: actions/checkout@v4
+        with:
+            repository: middleware-labs/install.middleware.io
+            path: target-repo
+            token: ${{ secrets.GH_TOKEN }}
+
+      - name: Create branch and update file
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          git config --global user.email "keval@middleware.io"
+          git config --global user.name "bhogayatakb"
+     
+          cd target-repo
+
+          # Create new branch
+          BRANCH_NAME="update-otel-config-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b $BRANCH_NAME
+
+          # Update the file
+          cp /tmp/new-daemonset-config.yaml scripts/otel-config-daemonset.yaml
+          cp /tmp/new-deployment-config.yaml scripts/otel-config-deployment.yaml
+
+          # Commit and push changes
+          git add .
+
+          git status
+
+          git commit -m "otel-config-updated"
+
+          git push  https://bhogayatakb:${GH_TOKEN}@github.com/middleware-labs/install.middleware.io.git
+
+          # Store branch name for next step
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+
+      - name: Create Pull Request
+        env:
+            GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+            gh pr create \
+            --repo middleware-labs/install.middleware.io \
+            --base master \
+            --head ${{ env.BRANCH_NAME }} \
+            --title "Update OTEL config from helm charts" \
+            --body "Automated PR to update OTEL configuration" 
