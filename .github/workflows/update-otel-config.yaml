@@ -2,7 +2,7 @@ name: Update OTEL Config
 on:
   pull_request:
     branches:
-      - otel-configmap-workflow
+      - master
     paths:
       - "charts/mw-kube-agent-v2/templates/configmap-deployment.yaml"
       - "charts/mw-kube-agent-v2/templates/configmap-daemonset.yaml"
