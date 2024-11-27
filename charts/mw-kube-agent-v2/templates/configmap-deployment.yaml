@@ -14,7 +14,9 @@ data:
         node_conditions_to_report: [ Ready, DiskPressure, MemoryPressure, PIDPressure, NetworkUnavailable ]
         distribution: kubernetes
         allocatable_types_to_report: [ cpu, memory, ephemeral-storage, storage ]
-      
+      k8s_events:
+        auth_type: serviceAccount
+        namespaces: all   
       prometheus:
         config:
           scrape_configs:
@@ -202,6 +204,10 @@ data:
             exporters: [  otlp ]
           logs/fluentforward:
             receivers: [ fluentforward ]
+            processors: [ resourcedetection, resource, resource/cluster, attributes/logs, resource/logs, k8sattributes, batch, batch/2 ]
+            exporters: [ otlp ]
+          logs/k8s_events:
+            receivers: [ k8s_events ]
             processors: [ resourcedetection, resource, resource/cluster, attributes/logs, resource/logs, k8sattributes, batch, batch/2 ]
             exporters: [ otlp ]
           logs/otlp:
