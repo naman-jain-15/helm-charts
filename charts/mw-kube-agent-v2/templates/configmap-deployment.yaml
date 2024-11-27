@@ -16,7 +16,6 @@ data:
         allocatable_types_to_report: [ cpu, memory, ephemeral-storage, storage ]
       k8s_events:
         auth_type: serviceAccount
-        namespaces: all   
       prometheus:
         config:
           scrape_configs:
