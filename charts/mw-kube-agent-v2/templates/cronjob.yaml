@@ -1,3 +1,4 @@
+{{- if .Values.features.enableRuntimePipelines }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -22,6 +23,13 @@ spec:
             - name: mw-kube-agent
               image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
               imagePullPolicy: {{ .Values.image.pullPolicy }}
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 50Mi
+                limits:
+                  cpu: 300m
+                  memory: 100Mi
               args:
                 - mw-agent
                 - update
@@ -48,6 +56,15 @@ spec:
                       key: api-key
                 {{- end }}
               securityContext:
-                privileged: true
+                privileged: false
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                runAsUser: 1000
+                runAsGroup: 1000
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop:
+                    - ALL
           restartPolicy: OnFailure
           serviceAccountName: mw-service-account-update
+{{- end }}

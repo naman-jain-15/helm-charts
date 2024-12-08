@@ -74,6 +74,14 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           name: {{ .Chart.Name }}
           securityContext:
-            privileged: true
+            privileged: false
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
       restartPolicy: Always
       serviceAccountName: {{ include "mw-kube-agent.serviceAccountName" . }}
