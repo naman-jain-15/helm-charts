@@ -43,7 +43,6 @@ jobs:
 
       - name: Apply Helm chart with apiKeyFromExistingSecret enabled
         run: |
-          kubectl apply -f ./charts/mw-kube-agent-v2/namespace.yaml
           helm install my-release ./charts/mw-kube-agent-v2 --values ./charts/mw-kube-agent-v2/testvalues/api-key-from-existing-secret-enabled.yaml
 
       - name: Validate Secret with apiKeyFromExistingSecret enabled

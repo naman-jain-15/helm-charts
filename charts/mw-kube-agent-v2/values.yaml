@@ -94,11 +94,21 @@ deployment:
 
 resources:
   requests:
-    cpu: "100m"   # Default CPU request
-    memory: "128Mi"  # Default memory request
+    cpu: "200m"   # Default CPU request
+    memory: "256Mi"  # Default memory request
   limits:
-    cpu: "200m"   # Default CPU limit
-    memory: "256Mi"  # Default memory limit
+    cpu: "500m"   # Default CPU limit
+    memory: "512Mi"  # Default memory limit
 
 selectorLabels:
   k8s-app: mw-app
+
+features: 
+  # For Kubelet based metrics i.e. k8s.pod.cpu.time, k8s.pod.cpu.utilization, etc.
+  enableKubeletMetricsCollection: true
+  # For monitoring Kubernetes nodes as host machines and reading logs from /var/log 
+  enableHostMonitoring: true
+  # For monitoring Kubernetes containers as docker containers
+  enableContainerMonitoring: false
+  # For getting and applying runtime settings from Middleware
+  enableRuntimePipelines: true

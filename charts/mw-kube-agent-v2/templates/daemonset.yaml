@@ -25,7 +25,9 @@ spec:
         effect: NoSchedule
       - operator: Exists
         effect: NoExecute
+      {{- if .Values.features.enableHostMonitoring }}
       hostNetwork: true
+      {{- end }}
       volumes:
       - name: mw-daemonset-otel-config-volume
         configMap:
@@ -34,12 +36,12 @@ spec:
             - key: otel-config
               path: otel-config-daemonset.yaml
       # volume binding for log collection 
+      {{- if .Values.features.enableHostMonitoring }}
       - name: varlog
         hostPath:
           path: /var/log
-      - name: varrun
-        hostPath:
-          path: /var/run/docker.sock
+      {{- end }}
+      {{- if .Values.features.enableContainerMonitoring }}
       - name: runcontainerd
         hostPath:
           path: /run/containerd/containerd.sock
@@ -47,6 +49,7 @@ spec:
       - name: varlibdockercontainers
         hostPath:
           path: /var/lib/docker/containers
+      {{- end }}
       containers:
         - args:
           - mw-agent
@@ -95,21 +98,32 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           name: {{ .Chart.Name }}
           securityContext:
-            privileged: true
+            privileged: false
+            allowPrivilegeEscalation: false
+            {{- if not .Values.features.enableHostMonitoring }}
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            {{- end }}
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
           volumeMounts:
           - name: mw-daemonset-otel-config-volume
             mountPath: /app
+          {{- if .Values.features.enableHostMonitoring }}
           - mountPath: /var/log
             name: varlog
             readOnly: true
-          - mountPath: /var/run/docker.sock
-            name: varrun
-            readOnly: true
+          {{- end }}
+          {{- if .Values.features.enableContainerMonitoring }}
           - mountPath: /run/containerd/containerd.sock
             name: runcontainerd
             readOnly: true
           - mountPath: /var/lib/docker/containers
             name: varlibdockercontainers
             readOnly: true
+          {{- end }}
       restartPolicy: Always
       serviceAccountName: {{ include "mw-kube-agent.serviceAccountName" . }}
