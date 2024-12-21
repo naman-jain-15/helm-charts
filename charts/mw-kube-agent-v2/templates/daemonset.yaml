@@ -61,6 +61,14 @@ spec:
               value: {{ .Values.mw.target | quote }}
             - name: MW_KUBE_CLUSTER_NAME
               value: {{ .Values.clusterMetadata.name | quote }}
+            - name: MW_AGENT_GRPC_PORT
+              value: {{ .Values.service.grpc.targetPort | quote }}
+            - name: MW_AGENT_HTTP_PORT
+              value: {{ .Values.service.http.targetPort | quote }}
+            - name: MW_AGENT_FLUENT_PORT
+              value: {{ .Values.service.fluent.targetPort | quote }}
+            - name: MW_AGENT_INTERNAL_METRICS_PORT
+              value: {{ .Values.mw.agentInternalMetricsPort | quote }}
             - name: MW_NAMESPACE
               value: {{ .Values.namespace.name | quote }}
             - name: MW_DOCKER_ENDPOINT

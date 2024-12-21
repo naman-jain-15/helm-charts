@@ -10,6 +10,7 @@ mw:
   dockerEndpoint: "unix:///var/run/docker.sock"
   selfProfiling: false
   profilingServerUrl: "https://profiling.middleware.io"
+  agentInternalMetricsPort: 8888
   agentFeatures:
     infraMonitoring: true
   apiKeyFromExistingSecret:
@@ -53,8 +54,6 @@ secret:
   csrfSecretName: mw-app-csrf
   keyHolderSecretName: mw-app-key-holder
 
-
-
 role:
   name: mw-role
 
@@ -70,15 +69,12 @@ clusterRoleBinding:
 service:
   name: mw-service
   type: NodePort
+  grpc:
+    port: 9319
+    targetPort: 9319
   http:
     port: 9320
     targetPort: 9320
-  grpc:
-    port: 443 
-    targetPort: 8443
-  grpc2:
-    port: 9319
-    targetPort: 9319
   fluent:
     port: 8006
     targetPort: 8006
