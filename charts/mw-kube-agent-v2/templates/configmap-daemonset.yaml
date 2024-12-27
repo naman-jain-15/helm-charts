@@ -96,7 +96,7 @@ data:
       kubeletstats:
         collection_interval: 15s
         auth_type: serviceAccount
-        endpoint: "${K8S_NODE_IP}:10250"
+        endpoint: "${env:K8S_NODE_IP}:10250"
         insecure_skip_verify: true
         k8s_api_config:
           auth_type: serviceAccount
@@ -150,10 +150,8 @@ data:
           http:
             endpoint: 0.0.0.0:9320
     exporters:
-      logging:
-        loglevel: fatal
       otlp:
-        endpoint: ${MW_TARGET}
+        endpoint: ${env:MW_TARGET}
     processors:
       k8sattributes:
         auth_type: "serviceAccount"
@@ -184,13 +182,7 @@ data:
             action: upsert
           - key: mw.account_key
             action: insert
-            value: ${MW_API_KEY}
-          - key: agent.installation.time
-            from_attribute: host.name
-            action: insert
-          - key: agent.installation.time
-            value: ${MW_AGENT_INSTALLATION_TIME}
-            action: update
+            value: ${env:MW_API_KEY}
           - key: k8s.cluster.name
             from_attribute: k8s.node.uid
             action: insert
@@ -333,7 +325,7 @@ data:
           metrics/kubeletstats:
             receivers: [ kubeletstats ]
             processors: [ resourcedetection, resource, k8sattributes, resource/cluster, batch, batch/2]
-            exporters: [ otlp, logging ]
+            exporters: [ otlp ]
           metrics/hostmetrics:
             receivers: [ hostmetrics ]
             processors: [ resourcedetection, resource, resource/hostmetrics, resource/cluster, k8sattributes, batch, batch/2]
