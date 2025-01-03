@@ -1,0 +1,11 @@
+apiVersion: v2
+name: mw-autoinstrumentation
+description: Middleware Auto-instrumentation Helm Chart
+version: 0.1.0
+type: application
+dependencies:
+  - name: opentelemetry-operator
+    version: "*"
+    repository: "https://open-telemetry.github.io/opentelemetry-helm-charts"
+    condition: opentelemetry-operator.enabled
+    namespace: opentelemetry-operator-system 

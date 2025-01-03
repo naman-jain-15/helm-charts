@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mw-auto-injector
+  name: mw-auto-injector
+  namespace: {{ .Values.mw.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mw-auto-injector
+  template:
+    metadata:
+      labels:
+        app: mw-auto-injector
+    spec:
+      tolerations:
+        - key: acme.com/lifespan-remaining
+          operator: Exists
+          effect: NoSchedule
+      containers:
+        - image: {{ .Values.mw.images.autoInjector.repository }}:{{ .Values.mw.images.autoInjector.tag }}
+          imagePullPolicy: {{ .Values.mw.images.pullPolicy }}
+          name: mw-auto-injector
+          env:
+            - name: TLS
+              value: "true"
+            - name: LOG_LEVEL
+              value: "debug"
+            - name: LOG_JSON
+              value: "false"
+            - name: MW_TARGET
+              value: {{ .Values.mw.target | quote }}
+            - name: MW_API_KEY
+              value: {{ .Values.mw.apiKey | quote }}
+            - name: MW_KUBE_CLUSTER_NAME
+              value: {{ .Values.clusterMetadata.name | quote }}
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi      
+          volumeMounts:
+            - name: tls
+              mountPath: "/etc/admission-webhook/tls"
+              readOnly: true
+      volumes:
+        - name: tls
+          secret:
+            secretName: mw-auto-injector-tls
