@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: mw-lang-detector
+  namespace: {{ .Values.mw.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: mw-lang-detector  
+  template:
+    metadata:
+      labels:
+        app: mw-lang-detector
+    spec:
+      containers:
+      - image: {{ .Values.mw.images.langDetector.repository }}:{{ .Values.mw.images.langDetector.tag }}
+        imagePullPolicy: {{ .Values.mw.images.pullPolicy }}
+        name: mw-lang-detector
+        command: ["/app/mw-lang-detector"]
+        args: ["start"]
+        env:
+          - name: MW_TARGET
+            value: {{ .Values.mw.target | quote }}
+          - name: MW_API_KEY
+            value: {{ .Values.mw.apiKey | quote }}
+          - name: MW_KUBE_CLUSTER_NAME
+            value: {{ .Values.clusterMetadata.name | quote }}
+          - name: K8S_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi        
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /proc
+          mountPropagation: None
+          name: proc
+          readOnly: true
+      hostPID: true
+      securityContext:
+        runAsUser: 0
+      serviceAccountName: mw-lang-detector
+      volumes:
+      - hostPath:
+          path: /proc
+        name: proc
