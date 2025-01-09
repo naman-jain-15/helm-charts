@@ -27,7 +27,7 @@ image:
   repository: ghcr.io/middleware-labs/mw-kube-agent
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 1.10.0
+  tag: 1.11.0
 
 imagePullSecrets: []
 nameOverride: ""
