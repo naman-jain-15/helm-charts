@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mw-kube-agent-update-configmap
+  namespace: {{.Values.namespace.name}}
+spec:
+  ttlSecondsAfterFinished: 0
+  template:
+    spec:    
+      containers:
+      - name: mw-kube-agent-update-configmap-container
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        args:
+          - mw-agent
+          - force-update-configmaps
+        env:
+          - name: MW_TARGET
+            value: {{ .Values.mw.target | quote }}
+          - name: MW_API_URL_FOR_CONFIG_CHECK
+            value: {{ .Values.mw.apiUrlForConfigCheck }}
+          - name: MW_KUBE_CLUSTER_NAME
+            value: {{ .Values.clusterMetadata.name }}
+          - name: MW_NAMESPACE
+            value: {{ .Values.namespace.name }}
+          {{- if .Values.mw.apiKeyFromExistingSecret.enabled }}
+          - name: MW_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.mw.apiKeyFromExistingSecret.name }}
+                key: {{ .Values.mw.apiKeyFromExistingSecret.key }}
+          {{- else }}
+          - name: MW_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: middleware-secret
+                key: api-key
+          {{- end }}
+      restartPolicy: OnFailure
+      serviceAccountName: mw-service-account-update
