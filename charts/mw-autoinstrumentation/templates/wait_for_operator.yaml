@@ -1,0 +1,34 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-wait-for-operator
+  namespace: {{ .Values.mw.namespace }}
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded,hook-failed
+spec:
+  activeDeadlineSeconds: 90  # timeout of job
+  template:
+    spec:
+      serviceAccountName: mw-lang-detector
+      containers:
+      - name: wait
+        image: busybox:1.36 
+        command:
+        - /bin/sh
+        - -c
+        - |
+          while true; do
+            response=$(wget --spider --timeout=3 --tries=1 https://{{ .Release.Name }}-opentelemetry-operator-webhook.{{ .Release.Namespace }}.svc:443 2>&1)
+            echo "Debug - Full response: $response"
+            
+            if ! echo "$response" | grep -q "Connection refused" > /dev/null; then
+              echo "Webhook endpoint is available - no connection refused"
+              exit 0
+            fi
+            echo "Waiting for operator webhook..."
+            sleep 5
+          done
+      restartPolicy: Never    
+  backoffLimit: 0
