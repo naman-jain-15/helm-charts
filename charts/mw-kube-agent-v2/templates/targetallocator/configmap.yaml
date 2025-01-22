@@ -1,0 +1,20 @@
+{{- if .Values.features.enablePrometheusTargetAllocator }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mw-target-allocator-config
+  namespace: {{.Values.namespace.name}}
+data:
+  targetallocator.yaml: |
+    collector_selector:
+      matchlabels:
+        integrations.middleware.io/prometheus: "true"
+    prometheus_cr:
+      enabled: true
+      scrape_interval: 30s
+      service_monitor_selector:
+        matchlabels:
+        {{- range $key, $value := .Values.targetAllocatorConfigs.serviceMonitor.matchLabels }}
+          {{ $key }}: {{ $value | quote }}
+        {{- end }}
+{{- end }}

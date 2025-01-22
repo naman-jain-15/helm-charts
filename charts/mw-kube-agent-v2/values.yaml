@@ -99,6 +99,10 @@ resources:
 selectorLabels:
   k8s-app: mw-app
 
+targetAllocatorConfigs:
+  serviceMonitor:
+    matchLabels: {}
+
 features: 
   # For Kubelet based metrics i.e. k8s.pod.cpu.time, k8s.pod.cpu.utilization, etc.
   enableKubeletMetricsCollection: true
@@ -108,3 +112,5 @@ features:
   enableContainerMonitoring: false
   # For getting and applying runtime settings from Middleware
   enableRuntimePipelines: true
+  # Target Allocator based Prometheus Monitoring
+  enablePrometheusTargetAllocator: false
