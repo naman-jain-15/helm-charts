@@ -46,6 +46,12 @@ spec:
             - name: mw-deployment-otel-config-volume
               mountPath: /app
           env:
+            {{- if .Values.features.enablePrometheusTargetAllocator }}
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            {{- end }}
             - name: MW_TARGET
               value: {{ .Values.mw.target | quote }}
             - name: MW_KUBE_CLUSTER_NAME
