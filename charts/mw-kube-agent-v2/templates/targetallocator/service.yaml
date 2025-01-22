@@ -1,0 +1,18 @@
+{{- if .Values.features.enablePrometheusTargetAllocator }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: mw-target-allocator
+  namespace: {{.Values.namespace.name}}
+  labels:
+    app: mw-target-allocator
+spec:
+  selector:
+    app: mw-target-allocator
+  ports:
+    - name: targetallocation
+      protocol: TCP
+      port: 80   
+      targetPort: http  
+  type: ClusterIP
+{{- end }}
