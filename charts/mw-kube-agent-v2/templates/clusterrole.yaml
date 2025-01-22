@@ -14,9 +14,12 @@ rules:
 
   # Other resources
   - apiGroups: [""]
-    resources: ["nodes", "nodes/stats", "namespaces", "pods", "serviceaccounts", "services", "configmaps", "endpoints", "persistentvolumeclaims", "replicationcontrollers", "replicationcontrollers/scale", "persistentvolumeclaims", "persistentvolumes", "bindings", "events", "limitranges", "namespaces/status", "pods/log", "pods/status", "replicationcontrollers/status", "resourcequotas", "resourcequotas/status"]
+    resources: ["nodes", "nodes/metrics", "nodes/stats", "namespaces", "pods", "serviceaccounts", "services", "configmaps", "endpoints", "persistentvolumeclaims", "replicationcontrollers", "replicationcontrollers/scale", "persistentvolumeclaims", "persistentvolumes", "bindings", "events", "limitranges", "namespaces/status", "pods", "pods/log", "pods/status", "replicationcontrollers/status", "resourcequotas", "resourcequotas/status"]
     verbs: ["get", "list", "watch"]
   
+  - apiGroups: [ "discovery.k8s.io" ]
+    resources: ["endpointslices"]
+    verbs: ["get", "list", "watch"]
   {{- if .Values.features.enableKubeletMetricsCollection }}
   - apiGroups: [""]
     resources: ["nodes/proxy"]
@@ -61,4 +64,11 @@ rules:
     resourceNames:
       - {{ .Values.mw.apiKeyFromExistingSecret.name }}
   {{- end }}
+
+  - nonResourceURLs: ["/metrics"]
+    verbs: ["get"]
+
+  - apiGroups: ["monitoring.coreos.com"]
+    resources: ["servicemonitors", "podmonitors", "probes", "scrapeconfigs"]
+    verbs: ["*"]
 {{- end }}
