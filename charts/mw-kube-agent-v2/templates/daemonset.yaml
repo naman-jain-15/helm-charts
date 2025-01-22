@@ -61,6 +61,12 @@ spec:
           - --otel-config-file
           - /app/otel-config-daemonset.yaml
           env:
+            {{- if .Values.features.enablePrometheusTargetAllocator }}
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            {{- end }}
             - name: MW_TARGET
               value: {{ .Values.mw.target | quote }}
             - name: MW_KUBE_CLUSTER_NAME
