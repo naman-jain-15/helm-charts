@@ -13,8 +13,13 @@ data:
       enabled: true
       scrape_interval: 30s
       service_monitor_selector:
-        matchlabels:
+        {{- if .Values.targetAllocatorConfigs.serviceMonitor.matchLabels }}
+        matchLabels:
         {{- range $key, $value := .Values.targetAllocatorConfigs.serviceMonitor.matchLabels }}
           {{ $key }}: {{ $value | quote }}
         {{- end }}
+        {{- else }}
+        matchlabels: {}
+        {{- end }}
+
 {{- end }}
