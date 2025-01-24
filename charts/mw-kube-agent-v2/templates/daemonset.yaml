@@ -11,6 +11,9 @@ spec:
     metadata:
       labels:
         {{- include ".Values.selectorLabels" . | nindent 8 }}
+        {{- if .Values.features.enablePrometheusTargetAllocator }}
+        integrations.middleware.io/prometheus: "true"
+        {{- end }}
     spec:
       tolerations:
       # these tolerations are to have the daemonset runnable on control plane nodes
@@ -61,12 +64,10 @@ spec:
           - --otel-config-file
           - /app/otel-config-daemonset.yaml
           env:
-            {{- if .Values.features.enablePrometheusTargetAllocator }}
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            {{- end }}
             - name: MW_TARGET
               value: {{ .Values.mw.target | quote }}
             - name: MW_KUBE_CLUSTER_NAME
