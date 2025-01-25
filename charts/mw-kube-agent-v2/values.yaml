@@ -101,7 +101,7 @@ priorityClass:
   create: false
   # The name of the priorityClass to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: "mw-kube-agent-priority-class"
+  name: ""
   # Sets the priority value of the priority class
   priorityValue: 1000000000
 
