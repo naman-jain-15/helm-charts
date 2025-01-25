@@ -60,3 +60,14 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Create the priority class name
+*/}}
+{{- define "mw-kube-agent.priorityClassName" -}}
+{{- if .Values.priorityClass.create }}
+{{- default (include "mw-kube-agent.fullname" .) .Values.priorityClass.name }}
+{{- else }}
+{{- default "default" .Values.priorityClass.name }}
+{{- end }}
+{{- end }}
