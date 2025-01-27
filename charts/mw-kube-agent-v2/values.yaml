@@ -47,8 +47,8 @@ serviceAccount:
 
 namespace:
   name: mw-agent-ns
-  
-secret: 
+
+secret:
   type: Opaque
   certSecretName: mw-app-certs
   csrfSecretName: mw-app-csrf
@@ -78,7 +78,7 @@ service:
   fluent:
     port: 8006
     targetPort: 8006
-  
+
 daemonset:
   name: mw-kube-agent
   configMap:
@@ -90,11 +90,20 @@ deployment:
 
 resources:
   requests:
-    cpu: "200m"   # Default CPU request
-    memory: "256Mi"  # Default memory request
+    cpu: "200m" # Default CPU request
+    memory: "256Mi" # Default memory request
   limits:
-    cpu: "500m"   # Default CPU limit
-    memory: "512Mi"  # Default memory limit
+    cpu: "500m" # Default CPU limit
+    memory: "512Mi" # Default memory limit
+
+priorityClass:
+  # Specifies whether a priorityClass should be created
+  create: false
+  # The name of the priorityClass to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+  # Sets the priority value of the priority class
+  priorityValue: 1000000000
 
 selectorLabels:
   k8s-app: mw-app
@@ -103,10 +112,10 @@ targetAllocatorConfigs:
   serviceMonitor:
     matchLabels: {}
 
-features: 
+features:
   # For Kubelet based metrics i.e. k8s.pod.cpu.time, k8s.pod.cpu.utilization, etc.
   enableKubeletMetricsCollection: true
-  # For monitoring Kubernetes nodes as host machines and reading logs from /var/log 
+  # For monitoring Kubernetes nodes as host machines and reading logs from /var/log
   enableHostMonitoring: true
   # For monitoring Kubernetes containers as docker containers
   enableContainerMonitoring: false
