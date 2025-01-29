@@ -31,6 +31,7 @@ jobs:
       - name: Build Helm dependencies
         run: |
           helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+          helm repo add middleware https://helm.middleware.io
           helm repo update
           helm dependency build charts/mw-autoinstrumentation
           helm dependency build charts/mw-kube-agent-v3
