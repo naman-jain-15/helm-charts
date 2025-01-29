@@ -26,7 +26,7 @@ appVersion: "0.1.0"
 
 dependencies:
   - name: mw-autoinstrumentation
-    version: 0.1.2
+    version: 0.2.1
     repository: https://helm.middleware.io
     condition: mw-autoinstrumentation.enabled
     alias: mw-autoinstrumentation 
