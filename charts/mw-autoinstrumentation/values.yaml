@@ -1,7 +1,13 @@
+global:
+  mw:
+    target: "XXXXXXX"
+    apiKey: "XXXXXXX"
+  clusterMetadata:
+    name: "unknown"
+  opentelemetryNamespace: opentelemetry-operator-system
+  
 mw:
-  target: ""
-  apiKey: ""
-  namespace: mw-autoinstrumentation
+  namespace: mw-agent-ns
   images:
     pullPolicy: IfNotPresent
     langDetector:
@@ -10,12 +16,6 @@ mw:
     autoInjector:
       repository: ghcr.io/middleware-labs/mw-auto-injector
       tag: beta
-
-clusterMetadata:
-  name: "unknown"
-
-global:
-  opentelemetryNamespace: opentelemetry-operator-system
 
 clusterDomain: cluster.local
 
