@@ -1,0 +1,6 @@
+dependencies:
+- name: mw-autoinstrumentation
+  repository: file:///home/naman/helm-charts/charts/mw-autoinstrumentation
+  version: 0.1.2
+digest: sha256:595cc75efe3ada93b93e1e4d1a89660dd4d06412ee4765d4bc08a410059745d5
+generated: "2025-01-17T12:21:14.181248191+05:30"

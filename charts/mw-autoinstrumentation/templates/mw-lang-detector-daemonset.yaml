@@ -20,11 +20,11 @@ spec:
         args: ["start"]
         env:
           - name: MW_TARGET
-            value: {{ .Values.mw.target | quote }}
+            value: {{ or .Values.global.mw.target "XXXXXX" | quote }}
           - name: MW_API_KEY
-            value: {{ .Values.mw.apiKey | quote }}
+            value: {{ or .Values.global.mw.apiKey "XXXXXX" | quote }}
           - name: MW_KUBE_CLUSTER_NAME
-            value: {{ .Values.clusterMetadata.name | quote }}
+            value: {{ or .Values.global.clusterMetadata.name "unknown" | quote }}
           - name: K8S_NODE_NAME
             valueFrom:
               fieldRef:

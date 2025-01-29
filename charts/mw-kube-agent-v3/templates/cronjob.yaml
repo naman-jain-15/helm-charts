@@ -1,0 +1,70 @@
+{{- if .Values.features.enableRuntimePipelines }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mw-kube-agent-update
+  namespace: {{.Values.namespace.name}}
+spec:
+  schedule: "{{ .Values.mw.configCheckInterval }}"  # Adjust the schedule as needed
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: mw-app
+            k8s-app: mw-app
+        spec:
+          tolerations:
+            - key: node-role.kubernetes.io/control-plane
+              effect: NoSchedule
+            - key: node-role.kubernetes.io/master
+              effect: NoSchedule
+          containers:
+            - name: mw-kube-agent
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 50Mi
+                limits:
+                  cpu: 300m
+                  memory: 100Mi
+              args:
+                - mw-agent
+                - update
+              env:
+                - name: MW_TARGET
+                  value: {{ or .Values.global.mw.target .Values.mw.target }}
+                - name: MW_API_URL_FOR_CONFIG_CHECK
+                  value: {{ .Values.mw.apiUrlForConfigCheck }}
+                - name: MW_KUBE_CLUSTER_NAME
+                  value: {{ or .Values.global.clusterMetadata.name .Values.clusterMetadata.name }}
+                - name: MW_NAMESPACE
+                  value: {{ .Values.namespace.name }}
+                {{- if .Values.mw.apiKeyFromExistingSecret.enabled }}
+                - name: MW_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.mw.apiKeyFromExistingSecret.name }}
+                      key: {{ .Values.mw.apiKeyFromExistingSecret.key }}
+                {{- else }}
+                - name: MW_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: middleware-secret
+                      key: api-key
+                {{- end }}
+              securityContext:
+                privileged: false
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                runAsUser: 1000
+                runAsGroup: 1000
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop:
+                    - ALL
+          restartPolicy: OnFailure
+          serviceAccountName: mw-service-account-update
+{{- end }}

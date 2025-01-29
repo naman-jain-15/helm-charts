@@ -1,0 +1,45 @@
+{{- if .Values.features.enablePrometheusTargetAllocator }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: mw-target-allocator
+  namespace: {{.Values.namespace.name}}
+  labels:
+    app: mw-target-allocator
+spec:
+  selector:
+    matchLabels:
+      app: mw-target-allocator
+  template:
+    metadata:
+      labels:
+        app: mw-target-allocator
+    spec:
+      serviceAccountName: mw-service-account
+      containers:
+      - name: target-allocator
+        image: ghcr.io/open-telemetry/opentelemetry-operator/target-allocator:latest
+        imagePullPolicy: Always
+        ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+        volumeMounts:
+        - name: config
+          mountPath: /conf
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+      volumes:
+      - name: config
+        configMap:
+          name: mw-target-allocator-config
+      tolerations:
+      - key: "node-role.kubernetes.io/master"
+        operator: "Exists"
+        effect: "NoSchedule"
+{{- end }}
