@@ -103,6 +103,15 @@ resources:
     cpu: "500m"   # Default CPU limit
     memory: "512Mi"  # Default memory limit
 
+priorityClass:
+  # Specifies whether a priorityClass should be created
+  create: false
+  # The name of the priorityClass to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+  # Sets the priority value of the priority class
+  priorityValue: 1000000000
+
 selectorLabels:
   k8s-app: mw-app
 
@@ -121,7 +130,6 @@ features:
   enableRuntimePipelines: true
   # Target Allocator based Prometheus Monitoring
   enablePrometheusTargetAllocator: false
-
 
 mw-autoinstrumentation:
   enabled: false
@@ -461,7 +469,7 @@ mw-autoinstrumentation:
     topologySpreadConstraints: []
     hostNetwork: false
 
-    # Allows for pod scheduler prioritisation
+    # Allows for pod scheduler prioritization
     priorityClassName: ""
 
     ## SecurityContext holds pod-level security attributes and common container settings.

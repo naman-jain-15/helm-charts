@@ -99,4 +99,7 @@ spec:
               drop:
                 - ALL
       restartPolicy: Always
+      {{- if .Values.priorityClass.create }}
+      priorityClassName: {{ include "mw-kube-agent.priorityClassName" . }}
+      {{- end }}
       serviceAccountName: {{ include "mw-kube-agent.serviceAccountName" . }}

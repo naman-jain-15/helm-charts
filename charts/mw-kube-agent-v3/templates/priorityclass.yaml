@@ -1,0 +1,11 @@
+{{- if .Values.priorityClass.create }}
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: {{ include "mw-kube-agent.priorityClassName" . }}
+  labels:
+    {{- include "mw-kube-agent.labels" . | nindent 4 }}
+value: {{ .Values.priorityClass.priorityValue }}
+globalDefault: false
+description: "Priority class for Middleware Kubernetes Agent"
+{{- end }} 
