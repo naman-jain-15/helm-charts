@@ -147,4 +147,7 @@ spec:
             readOnly: true
           {{- end }}
       restartPolicy: Always
+      {{- if .Values.priorityClass.create }}
+      priorityClassName: {{ include "mw-kube-agent.priorityClassName" . }}
+      {{- end }}
       serviceAccountName: {{ include "mw-kube-agent.serviceAccountName" . }}
