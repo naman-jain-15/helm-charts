@@ -10,15 +10,11 @@ mw:
   images:
     pullPolicy: IfNotPresent
     langDetector:
-      repository: ghcr.io/middleware-labs/k8s-lang-detector
-      tag: test
-      # repository: ghcr.io/middleware-labs/mw-lang-detector
-      # tag: beta
+      repository: ghcr.io/middleware-labs/mw-lang-detector
+      tag: 0.1.0
     autoInjector:
       repository: ghcr.io/middleware-labs/mw-auto-injector
-      tag: test
-      # repository: ghcr.io/middleware-labs/mw-auto-injector
-      # tag: beta
+      tag: 0.1.0
 
 clusterDomain: cluster.local
 
