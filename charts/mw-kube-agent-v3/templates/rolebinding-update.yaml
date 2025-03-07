@@ -5,7 +5,7 @@ metadata:
   labels:
     k8s-app: mw-app
   name: mw-role-binding-update
-  namespace: {{ .Values.namespace.name }}
+  namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -13,5 +13,5 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: mw-service-account-update
-    namespace: {{ .Values.namespace.name }}
+    namespace: {{ .Release.Namespace }}
 {{- end }}

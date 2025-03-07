@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "mw-kube-agent.labels" . | nindent 4 }}
   name: {{ .Values.clusterRole.name }}
-  namespace: {{.Values.namespace.name}}
+  namespace: {{ .Release.Namespace }}
 rules:
   # Allow Metrics Scraper to get metrics from the Metrics server
   - apiGroups: ["metrics.k8s.io"]

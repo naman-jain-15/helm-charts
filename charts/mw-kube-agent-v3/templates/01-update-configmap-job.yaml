@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: mw-kube-agent-update-configmap
-  namespace: {{.Values.namespace.name}}
+  namespace: {{ .Release.Namespace }}
 spec:
   ttlSecondsAfterFinished: 0
   template:
@@ -21,7 +21,7 @@ spec:
           - name: MW_KUBE_CLUSTER_NAME
             value: {{ or .Values.global.clusterMetadata.name .Values.clusterMetadata.name "unknown" }}
           - name: MW_NAMESPACE
-            value: {{ .Values.namespace.name }}
+            value: {{ .Release.Namespace }}
           {{- if .Values.mw.apiKeyFromExistingSecret.enabled }}
           - name: MW_API_KEY
             valueFrom:
