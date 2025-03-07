@@ -3,14 +3,14 @@ apiVersion: opentelemetry.io/v1alpha1
 kind: Instrumentation
 metadata:
   name: mw-autoinstrumentation
-  namespace: {{ .Values.mw.namespace }}
+  namespace: {{ .Release.Namespace }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-weight": "5"
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   exporter:
-    endpoint: http://mw-service.mw-agent-ns:9319
+    endpoint: http://mw-service.{{ .Release.Namespace }}:9319
   propagators:
     - tracecontext
     - baggage
@@ -21,16 +21,16 @@ spec:
   python:
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: http://mw-service.mw-agent-ns:9320
+        value: http://mw-service.{{ .Release.Namespace }}:9320
   go:
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: http://mw-service.mw-agent-ns:9320
+        value: http://mw-service.{{ .Release.Namespace }}:9320
   dotnet:
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: http://mw-service.mw-agent-ns:9320
+        value: http://mw-service.{{ .Release.Namespace }}:9320
   java:
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: http://mw-service.mw-agent-ns:9319
+        value: http://mw-service.{{ .Release.Namespace }}:9319

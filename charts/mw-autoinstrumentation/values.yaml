@@ -7,15 +7,18 @@ global:
   opentelemetryNamespace: opentelemetry-operator-system
   
 mw:
-  namespace: mw-agent-ns
   images:
     pullPolicy: IfNotPresent
     langDetector:
-      repository: ghcr.io/middleware-labs/mw-lang-detector
-      tag: beta
+      repository: ghcr.io/middleware-labs/k8s-lang-detector
+      tag: test
+      # repository: ghcr.io/middleware-labs/mw-lang-detector
+      # tag: beta
     autoInjector:
       repository: ghcr.io/middleware-labs/mw-auto-injector
-      tag: beta
+      tag: test
+      # repository: ghcr.io/middleware-labs/mw-auto-injector
+      # tag: beta
 
 clusterDomain: cluster.local
 
