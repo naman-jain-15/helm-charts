@@ -4,7 +4,7 @@ metadata:
   labels:
     app: mw-auto-injector
   name: mw-auto-injector
-  namespace: {{ .Values.mw.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
@@ -36,6 +36,8 @@ spec:
               value: {{ or .Values.global.mw.apiKey "XXXXXX" | quote }}
             - name: MW_KUBE_CLUSTER_NAME
               value: {{ or .Values.global.clusterMetadata.name "unknown" | quote }}
+            - name: MW_RELEASE_NAMESPACE
+              value: {{ .Release.Namespace }}
           resources:
             limits:
               cpu: 200m
