@@ -52,9 +52,6 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: mw-service-account
 
-namespace:
-  name: mw-agent-ns
-  
 secret: 
   type: Opaque
   certSecretName: mw-app-certs
@@ -134,15 +131,14 @@ features:
 mw-autoinstrumentation:
   enabled: false
   mw:
-    namespace: mw-agent-ns
     images:
       pullPolicy: IfNotPresent
       langDetector:
         repository: ghcr.io/middleware-labs/mw-lang-detector
-        tag: beta
+        tag: 0.1.0
       autoInjector:
         repository: ghcr.io/middleware-labs/mw-auto-injector
-        tag: beta
+        tag: 0.1.0
 
   clusterMetadata:
     name: "unknown"

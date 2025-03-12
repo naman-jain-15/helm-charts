@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "mw-kube-agent.labels" . | nindent 4 }}
   name: {{ .Values.role.name }}
-  namespace: {{.Values.namespace.name}}
+  namespace: {{ .Release.Namespace }}
 rules:
   # Allow Dashboard to get, update and delete Dashboard exclusive secrets.
   - apiGroups: [""]

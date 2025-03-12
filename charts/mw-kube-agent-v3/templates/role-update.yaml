@@ -5,7 +5,7 @@ metadata:
   labels:
     k8s-app: mw-app
   name: mw-role-update
-  namespace: {{ .Values.namespace.name }}
+  namespace: {{ .Release.Namespace }}
 rules:
 - apiGroups: [""]
   resources: ["configmaps"]

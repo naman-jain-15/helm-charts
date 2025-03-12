@@ -3,7 +3,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: mw-kube-agent-update
-  namespace: {{.Values.namespace.name}}
+  namespace: {{ .Release.Namespace }}
 spec:
   schedule: "{{ .Values.mw.configCheckInterval }}"  # Adjust the schedule as needed
   jobTemplate:
@@ -41,7 +41,7 @@ spec:
                 - name: MW_KUBE_CLUSTER_NAME
                   value: {{ or .Values.global.clusterMetadata.name .Values.clusterMetadata.name }}
                 - name: MW_NAMESPACE
-                  value: {{ .Values.namespace.name }}
+                  value: {{ .Release.Namespace }}
                 {{- if .Values.mw.apiKeyFromExistingSecret.enabled }}
                 - name: MW_API_KEY
                   valueFrom:
