@@ -9,7 +9,7 @@ metadata:
 rules:
 - apiGroups: [""]
   resources: ["configmaps"]
-  verbs: ["get", "update", "create"]
+  verbs: ["get", "update"]
 - apiGroups: ["apps"]
   resources: ["daemonsets", "deployments"]
   verbs: ["get", "update"]

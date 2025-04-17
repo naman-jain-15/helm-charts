@@ -85,8 +85,8 @@ spec:
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ or .Values.image.repository .Values.agentImage.repository }}:{{ or .Values.image.tag .Values.agentImage.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ or .Values.image.pullPolicy .Values.agentImage.pullPolicy }}
           name: {{ .Chart.Name }}
           securityContext:
             privileged: false

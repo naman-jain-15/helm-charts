@@ -20,7 +20,7 @@ spec:
           env:
             - name: MW_TARGET
               value: {{ or .Values.global.mw.target .Values.mw.target }}
-           {{- if .Values.mw.apiKeyFromExistingSecret.enabled }}
+            {{- if .Values.mw.apiKeyFromExistingSecret.enabled }}
             - name: MW_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -42,7 +42,7 @@ spec:
             - name: MW_CONFIG_CHECK_INTERVAL
               value: {{ .Values.mw.configCheckInterval }}
           image: "{{ .Values.configUpdaterImage.repository }}:{{ .Values.configUpdaterImage.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.agentImage.pullPolicy }}
+          imagePullPolicy: {{ .Values.configUpdaterImage.pullPolicy }}
           name: mw-kube-agent-config-updater
           securityContext:
             privileged: true

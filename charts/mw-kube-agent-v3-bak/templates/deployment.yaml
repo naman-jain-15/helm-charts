@@ -1,7 +1,7 @@
-kind: DaemonSet
+kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: {{ .Values.daemonset.name }}
+  name: {{ .Values.deployment.name }}
   namespace: {{.Values.namespace.name}}
 spec:
   selector:
@@ -28,40 +28,23 @@ spec:
         effect: NoSchedule
       - operator: Exists
         effect: NoExecute
-      hostNetwork: true
-      hostPID: true
-      dnsPolicy: ClusterFirstWithHostNet
+
       volumes:
-      - name: mw-daemonset-otel-config-volume
-        configMap:
-          name: mw-daemonset-otel-config
-          items:
-            - key: otel-config
-              path: otel-config-daemonset.yaml
-      # volume binding for log collection 
-      {{- if .Values.features.enableHostMonitoring }}
-      - name: varlog
-        hostPath:
-          path: /var/log
-      - name: etcmachineid
-        hostPath:
-          path: /etc/machine-id
-      {{- end }}
-      {{- if .Values.features.enableContainerMonitoring }}
-      - name: runcontainerd
-        hostPath:
-          path: /run/containerd/containerd.sock
-      # volume binding for log collection
-      - name: varlibdockercontainers
-        hostPath:
-          path: /var/lib/docker/containers
-      {{- end }}
+        - name: mw-deployment-otel-config-volume
+          configMap:
+            name: mw-deployment-otel-config
+            items:
+              - key: otel-config
+                path: otel-config-deployment.yaml
       containers:
         - args:
-          - mw-agent
-          - start
-          - --otel-config-file
-          - /app/otel-config-daemonset.yaml
+            - mw-agent
+            - start
+            - --otel-config-file
+            - /app/otel-config-deployment.yaml
+          volumeMounts:
+            - name: mw-deployment-otel-config-volume
+              mountPath: /app
           env:
             - name: POD_NAME
               valueFrom:
@@ -81,22 +64,12 @@ spec:
               value: {{ .Values.mw.agentInternalMetricsPort | quote }}
             - name: MW_NAMESPACE
               value: {{ .Values.namespace.name | quote }}
-            - name: MW_DOCKER_ENDPOINT
-              value: {{ .Values.mw.dockerEndpoint | quote }}
             - name: MW_AGENT_FEATURES_INFRA_MONITORING
               value: {{ .Values.mw.agentFeatures.infraMonitoring | quote }}
             - name: MW_AGENT_SELF_PROFILING
               value: {{ .Values.mw.selfProfiling | quote }}
             - name: MW_PROFILING_SERVER_URL
-              value: {{ .Values.mw.profilingServerUrl | quote}}
-            - name: K8S_NODE_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
-            - name: K8S_NODE_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
+              value: {{ .Values.mw.profilingServerUrl | quote }}
             {{- if .Values.mw.apiKeyFromExistingSecret.enabled }}
             - name: MW_API_KEY
               valueFrom:
@@ -111,41 +84,20 @@ spec:
                   key: api-key
             {{- end }}
           resources:
-          {{- toYaml .Values.resources | nindent 12 }}
-          image: "{{ .Values.agentImage.repository }}:{{ .Values.agentImage.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.agentImage.pullPolicy }}
+            {{- toYaml .Values.resources | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           name: {{ .Chart.Name }}
           securityContext:
             privileged: false
             allowPrivilegeEscalation: false
-            {{- if not .Values.features.enableHostMonitoring }}
             runAsNonRoot: true
             runAsUser: 1000
             runAsGroup: 1000
-            {{- end }}
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
-            readOnlyRootFilesystem: true
-          volumeMounts:
-          - name: mw-daemonset-otel-config-volume
-            mountPath: /app
-          {{- if .Values.features.enableHostMonitoring }}
-          - mountPath: /var/log
-            name: varlog
-            readOnly: true
-          - mountPath: /etc/machine-id
-            name: etcmachineid
-            readOnly: true
-          {{- end }}
-          {{- if .Values.features.enableContainerMonitoring }}
-          - mountPath: /run/containerd/containerd.sock
-            name: runcontainerd
-            readOnly: true
-          - mountPath: /var/lib/docker/containers
-            name: varlibdockercontainers
-            readOnly: true
-          {{- end }}
       restartPolicy: Always
       {{- if .Values.priorityClass.create }}
       priorityClassName: {{ include "mw-kube-agent.priorityClassName" . }}

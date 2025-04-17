@@ -12,7 +12,7 @@ global:
 mw:
   target: XXXXXXXXX
   apiKey: XXXXXXXXX
-  configCheckInterval: "60s"
+  configCheckInterval: "*/1 * * * *"
   apiUrlForConfigCheck: https://app.middleware.io
   dockerEndpoint: "unix:///var/run/docker.sock"
   selfProfiling: false
@@ -30,17 +30,12 @@ clusterMetadata:
 
 replicaCount: 1
 
-agentImage:
+image:
   repository: ghcr.io/middleware-labs/mw-kube-agent
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 1.15.0
+  tag: 1.12.0
 
-configUpdaterImage:
-  repository: ghcr.io/middleware-labs/mw-kube-agent-config-updater
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: 1.15.0
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
