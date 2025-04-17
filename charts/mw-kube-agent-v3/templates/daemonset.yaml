@@ -2,7 +2,7 @@ kind: DaemonSet
 apiVersion: apps/v1
 metadata:
   name: {{ .Values.daemonset.name }}
-  namespace: {{.Values.namespace.name}}
+  namespace: {{.Release.Namespace}}
 spec:
   selector:
     matchLabels:
@@ -80,7 +80,7 @@ spec:
             - name: MW_AGENT_INTERNAL_METRICS_PORT
               value: {{ .Values.mw.agentInternalMetricsPort | quote }}
             - name: MW_NAMESPACE
-              value: {{ .Values.namespace.name | quote }}
+              value: {{ .Release.Namespace | quote }}
             - name: MW_DOCKER_ENDPOINT
               value: {{ .Values.mw.dockerEndpoint | quote }}
             - name: MW_AGENT_FEATURES_INFRA_MONITORING

@@ -2,11 +2,11 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: mw-auto-injector-tls
-  namespace: {{ .Values.mw.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   dnsNames:
-    - mw-auto-injector.{{ .Values.mw.namespace }}.svc
-    - mw-auto-injector.{{ .Values.mw.namespace }}.svc.{{ .Values.clusterDomain }}
+    - mw-auto-injector.{{ .Release.Namespace }}.svc
+    - mw-auto-injector.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }}
   issuerRef:
     kind: Issuer
     name: mw-auto-injector-selfsigned
@@ -16,6 +16,6 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: mw-auto-injector-selfsigned
-  namespace: {{ .Values.mw.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   selfSigned: {}

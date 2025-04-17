@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: mw-target-allocator
-  namespace: {{.Values.namespace.name}}
+  namespace: {{ .Release.Namespace }}
   labels:
     app: mw-target-allocator
 spec:

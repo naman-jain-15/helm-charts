@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: mw-lang-detector
-  namespace: {{ .Values.mw.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
@@ -25,6 +25,8 @@ spec:
             value: {{ or .Values.global.mw.apiKey "XXXXXX" | quote }}
           - name: MW_KUBE_CLUSTER_NAME
             value: {{ or .Values.global.clusterMetadata.name "unknown" | quote }}
+          - name: MW_RELEASE_NAMESPACE
+            value: {{ .Release.Namespace }}
           - name: K8S_NODE_NAME
             valueFrom:
               fieldRef:

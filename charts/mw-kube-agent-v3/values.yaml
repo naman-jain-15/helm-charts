@@ -58,9 +58,6 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: mw-service-account
 
-namespace:
-  name: mw-agent-ns
-  
 secret: 
   type: Opaque
   certSecretName: mw-app-certs
@@ -140,15 +137,14 @@ features:
 mw-autoinstrumentation:
   enabled: false
   mw:
-    namespace: mw-agent-ns
     images:
       pullPolicy: IfNotPresent
       langDetector:
         repository: ghcr.io/middleware-labs/mw-lang-detector
-        tag: beta
+        tag: 0.1.0
       autoInjector:
         repository: ghcr.io/middleware-labs/mw-auto-injector
-        tag: beta
+        tag: 0.1.0
 
   clusterMetadata:
     name: "unknown"
@@ -242,8 +238,8 @@ mw-autoinstrumentation:
         # The Go instrumentation support in the operator is disabled by default.
         # To enable it, use the operator.autoinstrumentation.go feature gate.
         go:
-          repository: ""
-          tag: ""
+          repository: "ghcr.io/open-telemetry/opentelemetry-go-instrumentation/autoinstrumentation-go"
+          tag: "v0.21.0"
       # Feature Gates are a comma-delimited list of feature gate identifiers.
       # Prefix a gate with '-' to disable support.
       # Prefixing a gate with '+' or no prefix will enable support.

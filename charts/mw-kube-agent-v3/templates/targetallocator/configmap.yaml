@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mw-target-allocator-config
-  namespace: {{.Values.namespace.name}}
+  namespace: {{ .Release.Namespace }}
 data:
   targetallocator.yaml: |
     collector_selector:

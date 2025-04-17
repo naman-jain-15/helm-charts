@@ -3,7 +3,7 @@ kind: MutatingWebhookConfiguration
 metadata:
   name: "mw-auto-injector.acme.com"
   annotations:
-    cert-manager.io/inject-ca-from: {{ .Values.mw.namespace }}/mw-auto-injector-tls
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/mw-auto-injector-tls
 webhooks:
   - name: "mw-auto-injector.acme.com"
     namespaceSelector:
@@ -15,7 +15,7 @@ webhooks:
       {{- else }}
         - key: kubernetes.io/metadata.name
           operator: NotIn
-          values: {{ concat .Values.webhook.excludedNamespaces .Values.webhook.userExcludedNamespaces | toJson  }}
+          values: {{ concat .Values.webhook.excludedNamespaces (list .Release.Namespace) .Values.webhook.userExcludedNamespaces | toJson  }}
       {{- end }}
     failurePolicy: Ignore
     rules:
@@ -26,7 +26,7 @@ webhooks:
         scope: "*"
     clientConfig:
       service:
-        namespace: {{ .Values.mw.namespace }}
+        namespace: {{ .Release.Namespace }}
         name: mw-auto-injector
         path: /mutate-resources
         port: 443
