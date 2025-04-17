@@ -44,8 +44,6 @@ spec:
           image: "{{ .Values.configUpdaterImage.repository }}:{{ .Values.configUpdaterImage.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.configUpdaterImage.pullPolicy }}
           name: mw-kube-agent-config-updater
-          securityContext:
-            privileged: true
           resources: {}
       restartPolicy: Always
       serviceAccountName: mw-service-account-update
