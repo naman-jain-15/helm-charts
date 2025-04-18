@@ -5,11 +5,11 @@ metadata:
   labels:
     k8s-app: mw-app
   name: mw-role-update
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.namespace.name }}
 rules:
 - apiGroups: [""]
   resources: ["configmaps"]
-  verbs: ["get", "update", "create"]
+  verbs: ["get", "update"]
 - apiGroups: ["apps"]
   resources: ["daemonsets", "deployments"]
   verbs: ["get", "update"]

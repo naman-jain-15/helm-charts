@@ -1,0 +1,23 @@
+{{- if .Values.rbac.create -}}
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  labels:
+    {{- include "mw-kube-agent.labels" . | nindent 4 }}
+  name: {{ .Values.role.name }}
+  namespace: {{.Values.namespace.name}}
+rules:
+  # Allow Dashboard to get, update and delete Dashboard exclusive secrets.
+  - apiGroups: [""]
+    resources: ["pods", "pods/exec"]
+    verbs: ["get", "list"]
+    # Allow Dashboard to get and update 'mw-app-settings' config map.
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: [{{ .Values.daemonset.configMap.name }}, {{ .Values.deployment.configMap.name }}]
+    verbs: ["get"]
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "list", "watch"]
+    # Allow Dashboard to get metrics.
+{{- end }}

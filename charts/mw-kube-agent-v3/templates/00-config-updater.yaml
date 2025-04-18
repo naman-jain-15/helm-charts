@@ -1,0 +1,49 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: mw-kube-agent-config-updater
+  namespace: "mw-agent-ns"
+spec:
+  selector:
+    matchLabels:
+      app: mw-kube-agent-config-updater
+  template:
+    metadata:
+      labels:
+        app: mw-kube-agent-config-updater
+        k8s-app: mw-app
+    spec:
+      containers:
+        - args:
+            - mw-kube-agent-config-updater
+            - start
+          env:
+            - name: MW_TARGET
+              value: {{ or .Values.global.mw.target .Values.mw.target }}
+            {{- if .Values.mw.apiKeyFromExistingSecret.enabled }}
+            - name: MW_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.mw.apiKeyFromExistingSecret.name }}
+                  key: {{ .Values.mw.apiKeyFromExistingSecret.key }}
+            {{- else }}
+            - name: MW_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: middleware-secret
+                  key: api-key
+            {{- end }}
+            - name: MW_KUBE_CLUSTER_NAME
+              value: {{ or .Values.global.clusterMetadata.name .Values.clusterMetadata.name }}
+            - name: MW_NAMESPACE
+              value: {{ .Values.namespace.name }}
+            - name: MW_API_URL_FOR_CONFIG_CHECK
+              value: {{ .Values.mw.apiUrlForConfigCheck }}
+            - name: MW_CONFIG_CHECK_INTERVAL
+              value: {{ .Values.mw.configCheckInterval }}
+          image: "{{ .Values.configUpdaterImage.repository }}:{{ .Values.configUpdaterImage.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.configUpdaterImage.pullPolicy }}
+          name: mw-kube-agent-config-updater
+          resources: {}
+      restartPolicy: Always
+      serviceAccountName: mw-service-account-update
