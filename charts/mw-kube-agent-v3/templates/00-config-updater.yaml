@@ -36,7 +36,7 @@ spec:
             - name: MW_KUBE_CLUSTER_NAME
               value: {{ or .Values.global.clusterMetadata.name .Values.clusterMetadata.name }}
             - name: MW_NAMESPACE
-              value: {{ .Values.namespace.name }}
+              value: {{ .Release.Namespace | quote }}
             - name: MW_API_URL_FOR_CONFIG_CHECK
               value: {{ .Values.mw.apiUrlForConfigCheck }}
             - name: MW_CONFIG_CHECK_INTERVAL
