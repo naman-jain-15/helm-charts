@@ -18,6 +18,7 @@ mw:
   selfProfiling: false
   profilingServerUrl: "https://profiling.middleware.io"
   agentInternalMetricsPort: 8888
+  enableDatadogReceiver: "false"
   agentFeatures:
     infraMonitoring: true
   apiKeyFromExistingSecret:
@@ -34,13 +35,13 @@ image:
   repository: ghcr.io/middleware-labs/mw-kube-agent
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 1.15.2
+  tag: 1.16.0
 
 configUpdaterImage:
   repository: ghcr.io/middleware-labs/mw-kube-agent-config-updater
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 1.15.2
+  tag: 1.16.0
   
 imagePullSecrets: []
 nameOverride: ""

@@ -89,6 +89,8 @@ spec:
               value: {{ .Values.mw.selfProfiling | quote }}
             - name: MW_PROFILING_SERVER_URL
               value: {{ .Values.mw.profilingServerUrl | quote}}
+            - name: MW_ENABLE_DATADOG_RECEIVER
+              value: {{ .Values.mw.enableDatadogReceiver | quote }}
             - name: K8S_NODE_NAME
               valueFrom:
                 fieldRef:

@@ -70,6 +70,8 @@ spec:
               value: {{ .Values.mw.selfProfiling | quote }}
             - name: MW_PROFILING_SERVER_URL
               value: {{ .Values.mw.profilingServerUrl | quote }}
+            - name: MW_ENABLE_DATADOG_RECEIVER
+              value: {{ .Values.mw.enableDatadogReceiver | quote }}
             {{- if .Values.mw.apiKeyFromExistingSecret.enabled }}
             - name: MW_API_KEY
               valueFrom:
