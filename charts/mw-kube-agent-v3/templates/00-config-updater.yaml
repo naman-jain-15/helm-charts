@@ -41,6 +41,8 @@ spec:
               value: {{ .Values.mw.apiUrlForConfigCheck }}
             - name: MW_CONFIG_CHECK_INTERVAL
               value: {{ .Values.mw.configCheckInterval }}
+            - name: MW_ENABLE_DATADOG_RECEIVER
+              value: {{ .Values.mw.enableDatadogReceiver | quote }}
           image: "{{ .Values.configUpdaterImage.repository }}:{{ .Values.configUpdaterImage.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.configUpdaterImage.pullPolicy }}
           name: mw-kube-agent-config-updater
