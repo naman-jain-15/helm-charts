@@ -20,6 +20,8 @@ spec:
     argument: "1.0"
   python:
     env:
+      - name: MW_AGENT_SERVICE
+        value: mw-service.{{ .Release.Namespace }}.svc.cluster.local
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://mw-service.{{ .Release.Namespace }}:9320
   go:
