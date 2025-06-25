@@ -89,6 +89,9 @@ service:
   fluent:
     port: 8006
     targetPort: 8006
+  healthcheck:
+    port: 13133
+    targetPort: 13133
   
 daemonset:
   name: mw-kube-agent
@@ -231,8 +234,8 @@ mw-autoinstrumentation:
           repository: ""
           tag: ""
         python:
-          repository: ""
-          tag: ""
+          repository: "ghcr.io/middleware-labs/opentelemetry-operator/autoinstrumentation-python"
+          tag: "2.4.0"
         dotnet:
           repository: ""
           tag: ""
