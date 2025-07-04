@@ -1,6 +1,7 @@
 name: Release Charts
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
@@ -34,7 +35,6 @@ jobs:
           helm repo add middleware https://helm.middleware.io
           helm repo update
           helm dependency build charts/mw-autoinstrumentation
-          helm dependency build charts/mw-kube-agent-v3
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.4.0
