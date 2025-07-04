@@ -34,5 +34,7 @@ spec:
         value: http://mw-service.{{ .Release.Namespace }}:9320
   java:
     env:
+      - name: MW_AGENT_SERVICE
+        value: mw-service.{{ .Release.Namespace }}.svc.cluster.local
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://mw-service.{{ .Release.Namespace }}:9319
