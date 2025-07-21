@@ -35,13 +35,13 @@ image:
   repository: ghcr.io/middleware-labs/mw-kube-agent
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 1.16.0
+  tag: 1.17.1
 
 configUpdaterImage:
   repository: ghcr.io/middleware-labs/mw-kube-agent-config-updater
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 1.16.0
+  tag: 1.17.1
   
 imagePullSecrets: []
 nameOverride: ""
@@ -228,8 +228,8 @@ mw-autoinstrumentation:
         tag: ""
       autoInstrumentationImage:
         java:
-          repository: ""
-          tag: ""
+          repository: "ghcr.io/middleware-labs/opentelemetry-operator/autoinstrumentation-java"
+          tag: "1.7.0"
         nodejs:
           repository: ""
           tag: ""
