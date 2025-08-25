@@ -145,7 +145,7 @@ mw-autoinstrumentation:
       pullPolicy: IfNotPresent
       langDetector:
         repository: ghcr.io/middleware-labs/mw-lang-detector
-        tag: 0.1.0
+        tag: 0.1.1
       autoInjector:
         repository: ghcr.io/middleware-labs/mw-auto-injector
         tag: 0.1.0
