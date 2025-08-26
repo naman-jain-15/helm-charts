@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'charts/mw-kube-agent-v3/**'
 
 jobs:
   release:
