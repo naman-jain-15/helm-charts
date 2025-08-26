@@ -38,3 +38,5 @@ spec:
         value: mw-service.{{ .Release.Namespace }}.svc.cluster.local
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://mw-service.{{ .Release.Namespace }}:9319
+      - name: OTEL_EXPORTER_OTLP_PROTOCOL
+        value: grpc
