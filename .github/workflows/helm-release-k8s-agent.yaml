@@ -40,5 +40,7 @@ jobs:
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.4.0
+        with:
+          charts_dir: charts/mw-kube-agent-v3
         env:
           CR_TOKEN: "${{ secrets.GIT_HELM_TOKEN }}"
