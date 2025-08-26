@@ -28,8 +28,10 @@ spec:
         effect: NoSchedule
       - operator: Exists
         effect: NoExecute
+      {{- if .Values.features.enableHostMonitoring }}
       hostNetwork: true
       hostPID: true
+      {{- end }}
       dnsPolicy: ClusterFirstWithHostNet
       volumes:
       - name: mw-daemonset-otel-config-volume
