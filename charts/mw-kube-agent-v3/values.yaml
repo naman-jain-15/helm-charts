@@ -229,7 +229,7 @@ mw-autoinstrumentation:
       autoInstrumentationImage:
         java:
           repository: "ghcr.io/middleware-labs/opentelemetry-operator/autoinstrumentation-java"
-          tag: "1.7.0"
+          tag: "1.8.0"
         nodejs:
           repository: ""
           tag: ""
