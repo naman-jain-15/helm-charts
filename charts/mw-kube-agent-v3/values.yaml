@@ -126,6 +126,10 @@ targetAllocatorConfigs:
   serviceMonitor:
     matchLabels: {}
 
+providers:
+  gke:
+    autopilot: false
+    
 features: 
   # For Kubelet based metrics i.e. k8s.pod.cpu.time, k8s.pod.cpu.utilization, etc.
   enableKubeletMetricsCollection: true

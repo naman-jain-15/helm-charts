@@ -41,10 +41,12 @@ spec:
             - key: otel-config
               path: otel-config-daemonset.yaml
       # volume binding for log collection 
-      {{- if .Values.features.enableHostMonitoring }}
+      {{- if or .Values.features.enableHostMonitoring .Values.providers.gke.autopilot }}
       - name: varlog
         hostPath:
           path: /var/log
+      {{- end }}
+      {{- if .Values.features.enableHostMonitoring }}
       - name: etcmachineid
         hostPath:
           path: /etc/machine-id
@@ -122,7 +124,7 @@ spec:
           securityContext:
             privileged: false
             allowPrivilegeEscalation: false
-            {{- if not .Values.features.enableHostMonitoring }}
+            {{- if and (not .Values.features.enableHostMonitoring) (not .Values.providers.gke.autopilot) }}
             runAsNonRoot: true
             runAsUser: 1000
             runAsGroup: 1000
@@ -134,10 +136,12 @@ spec:
           volumeMounts:
           - name: mw-daemonset-otel-config-volume
             mountPath: /app
-          {{- if .Values.features.enableHostMonitoring }}
+          {{- if or .Values.features.enableHostMonitoring .Values.providers.gke.autopilot }}
           - mountPath: /var/log
             name: varlog
             readOnly: true
+          {{- end }}
+          {{- if .Values.features.enableHostMonitoring }}
           - mountPath: /etc/machine-id
             name: etcmachineid
             readOnly: true
