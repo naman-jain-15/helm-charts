@@ -1,9 +1,34 @@
+{{/*
+Store certificate data at the top level and reuse
+*/}}
+{{- $certs := include "mw-auto-injector.webhook-certs" . | trim | fromYaml }}
+
+# Secret (only when needed)
+{{- if not .Values.webhook.certManager.enabled }}
+{{- if not $certs.useCertManager }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mw-auto-injector-tls
+  namespace: {{ .Release.Namespace }}
+type: kubernetes.io/tls
+data:
+  tls.crt: {{ $certs.crt }}
+  tls.key: {{ $certs.key }}
+  ca.crt: {{ $certs.ca }}
+{{- end }}
+{{- end }}
+
+---
+# Webhook Configuration
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
   name: "mw-auto-injector.acme.com"
+  {{- if .Values.webhook.certManager.enabled }}
   annotations:
     cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/mw-auto-injector-tls
+  {{- end }}
 webhooks:
   - name: "mw-auto-injector.acme.com"
     namespaceSelector:
@@ -30,6 +55,10 @@ webhooks:
         name: mw-auto-injector
         path: /mutate-resources
         port: 443
+      {{- if not .Values.webhook.certManager.enabled }}
+      caBundle: {{ $certs.ca }}
+      {{- end }}
+      # caBundle will be injected by cert-manager
     admissionReviewVersions: ["v1"]
     sideEffects: None
     timeoutSeconds: 5

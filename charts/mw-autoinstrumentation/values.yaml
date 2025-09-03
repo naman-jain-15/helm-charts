@@ -19,6 +19,12 @@ mw:
 clusterDomain: cluster.local
 
 webhook:
+  certManager:
+    enabled: true
+  autoGenerateCert:
+    enabled: true
+    recreate: true  # Set to true to generate new certs on each upgrade
+    certPeriodDays: 365
   excludedNamespaces:
     - mw-autoinstrumentation
     - kube-system

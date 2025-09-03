@@ -5,7 +5,12 @@ metadata:
   name: mw-autoinstrumentation
   namespace: {{ .Release.Namespace }}
   annotations:
+    {{- $skipPostUpgrade := and (not .Values.webhook.certManager.enabled) (.Release.IsUpgrade) }}
+    {{- if $skipPostUpgrade }}
+    "helm.sh/hook": post-install
+    {{- else }}
     "helm.sh/hook": post-install,post-upgrade
+    {{- end }}
     "helm.sh/hook-weight": "5"
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
