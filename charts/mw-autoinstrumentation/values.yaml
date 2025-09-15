@@ -41,11 +41,18 @@ webhook:
 opentelemetry-operator:
   enabled: true
 
+  # Top level field indicating an override for the namespace
+  namespaceOverride: ""
+
   # Default values for opentelemetry-operator.
   # This is a YAML-formatted file.
   # Declare variables to be passed into your templates.
 
   replicaCount: 1
+
+  ## The number of old history to retain to allow rollback.
+  ##
+  revisionHistoryLimit: 10
 
   ## Provide a name in place of opentelemetry-operator (includes the chart's release name).
   ##
@@ -83,6 +90,7 @@ opentelemetry-operator:
     image:
       repository: ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator
       tag: ""
+      imagePullPolicy: IfNotPresent
     collectorImage:
       repository: "otel/opentelemetry-collector-k8s"
       tag: 0.101.0
@@ -105,16 +113,35 @@ opentelemetry-operator:
       dotnet:
         repository: ""
         tag: ""
+      apacheHttpd:
+        repository: ""
+        tag: ""
       # The Go instrumentation support in the operator is disabled by default.
       # To enable it, use the operator.autoinstrumentation.go feature gate.
       go:
         repository: ""
         tag: ""
+    # To enable Go instrumentation, manager.autoInstrumentation.go.enabled must be set to true
+    autoInstrumentation:
+      go:
+        enabled: true
+    # If ignoreMissingCollectorCRDs is set to true, the manager will not raise errors
+    # if the collector CRDs are not present.
+    ignoreMissingCollectorCRDs: false
     # Feature Gates are a comma-delimited list of feature gate identifiers.
     # Prefix a gate with '-' to disable support.
     # Prefixing a gate with '+' or no prefix will enable support.
     # A full list of valid identifiers can be found here: https://github.com/open-telemetry/opentelemetry-operator/blob/main/pkg/featuregate/featuregate.go
     featureGates: ""
+    # The featureGatesMap will enable or disable specific feature gates in the operator as well as deploy any prerequisites for the feature gate.
+    # If this property is not an empty map, the featureGates property will be ignored.
+    featureGatesMap: {}
+    # operator.targetallocator.mtls: false
+    # operator.targetallocator.fallbackstrategy: false
+    # operator.collector.targetallocatorcr: false
+    # operator.sidecarcontainers.native: false
+    # operator.golang.flags: false
+    # operator.collector.default.config: false
     ports:
       metricsPort: 8080
       webhookPort: 9443
@@ -133,6 +160,14 @@ opentelemetry-operator:
     env:
       ENABLE_WEBHOOKS: "true"
 
+    # Extra definitions of environment variables.
+    extraEnvs: []
+    # - name: GOMEMLIMIT
+    #   valueFrom:
+    #     resourceFieldRef:
+    #       containerName: manager
+    #       resource: limits.memory
+
     # -- Create the manager ServiceAccount
     serviceAccount:
       create: true
@@ -149,6 +184,10 @@ opentelemetry-operator:
       annotations: {}
       metricsEndpoints:
         - port: metrics
+      # Used to set relabeling and metricRelabeling configs on the ServiceMonitor
+      # https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config
+      relabelings: []
+      metricRelabelings: []
 
     # Adds additional annotations to the manager Deployment
     deploymentAnnotations: {}
@@ -167,10 +206,19 @@ opentelemetry-operator:
       # Create default rules for monitoring the manager
       defaultRules:
         enabled: false
+        ## Additional labels for PrometheusRule alerts
+        additionalRuleLabels: {}
+        ## Additional annotations for PrometheusRule alerts
+        additionalRuleAnnotations: {}
+        ## Alerts are considered firing once they have been returned for this long.
+        duration: 5m
       # additional labels on the PrometheusRule
       extraLabels: {}
       # add annotations on the PrometheusRule
       annotations: {}
+      # change the default runbook urls.
+      # the alert name will get appended at the end of the url as an anchor.
+      runbookUrl: ""
 
     # Whether the operator should create RBAC permissions for collectors
     createRbacPermissions: false
@@ -217,11 +265,14 @@ opentelemetry-operator:
 
     ## Container specific securityContext
     ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-    securityContext: {}
-    # allowPrivilegeEscalation: false
-    # capabilities:
-    #   drop:
-    #   - ALL
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
 
   ## Provide OpenTelemetry Operator kube-rbac-proxy container image.
   ##
@@ -229,7 +280,7 @@ opentelemetry-operator:
     enabled: true
     image:
       repository: quay.io/brancz/kube-rbac-proxy
-      tag: v0.15.0
+      tag: v0.19.1
     ports:
       proxyPort: 8443
     resources:
@@ -246,11 +297,14 @@ opentelemetry-operator:
 
     ## Container specific securityContext
     ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-    securityContext: {}
-    # allowPrivilegeEscalation: false
-    # capabilities:
-    #   drop:
-    #   - ALL
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
 
   ## Admission webhooks make sure only requests with correctly formatted rules will get into the Operator.
   ## They also enable the sidecar injection for OpenTelemetryCollector and Instrumentation CR's
@@ -290,6 +344,12 @@ opentelemetry-operator:
       ## Annotations for the cert and issuer if cert-manager is enabled.
       certificateAnnotations: {}
       issuerAnnotations: {}
+      # duration must be specified by a Go time.Duration (ending in s, m or h)
+      duration: ""
+      # renewBefore must be specified by a Go time.Duration (ending in s, m or h)
+      # Take care when setting the renewBefore field to be very close to the duration
+      # as this can lead to a renewal loop, where the Certificate is always in the renewal period.
+      renewBefore: ""
 
     ## TLS Certificate Option 2: Use Helm to automatically generate self-signed certificate.
     ## certManager must be disabled and autoGenerateCert must be enabled.
@@ -298,7 +358,8 @@ opentelemetry-operator:
       enabled: true
       # If set to true, new webhook key/certificate is generated on helm upgrade.
       recreate: true
-
+      # Cert period time in days. The default is 365 days.
+      certPeriodDays: 365
     ## TLS Certificate Option 3: Use your own self-signed certificate.
     ## certManager and autoGenerateCert must be disabled and certFile, keyFile, and caFile must be set.
     ## The chart reads the contents of the file paths with the helm .Files.Get function.
@@ -315,7 +376,9 @@ opentelemetry-operator:
     serviceAnnotations: {}
 
     ## Secret annotations
-    secretAnnotations: {}
+    secretAnnotations: 
+      "helm.sh/hook": "pre-install,pre-upgrade"
+      "helm.sh/hook-delete-policy": "before-hook-creation"
     ## Secret labels
     secretLabels: {}
 
@@ -337,7 +400,8 @@ opentelemetry-operator:
 
   affinity: {}
   tolerations: []
-  nodeSelector: {}
+  nodeSelector:
+    kubernetes.io/os: linux
   topologySpreadConstraints: []
   hostNetwork: false
 
@@ -352,8 +416,34 @@ opentelemetry-operator:
     runAsUser: 65532
     fsGroup: 65532
 
+  # Determines how the operator pod mounts the service account token and also
+  # sets the corresponding field in the associated service account object.
+  # - When set to `true` (default), the service account token is automatically
+  #   mounted to the pod, and the service account object will have the
+  #   `automountServiceAccountToken` field set to `true`.
+  # - When set to `false`, automounting of the service account token is disabled,
+  #   and the token is manually mounted using a volume and volumeMounts in
+  #   the pod spec by the chart. This also updates the `automountServiceAccountToken`
+  #   field in the service account object to `false`.
+  automountServiceAccountToken: true
+
   testFramework:
     image:
       repository: busybox
       tag: latest
-    # Include values from the original helm-values.yaml
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+    resources: {}
+    # resources:
+    #   limits:
+    #     cpu: 100m
+    #     memory: 128Mi
+    #   requests:
+    #     cpu: 10m
+    #     memory: 64Mi

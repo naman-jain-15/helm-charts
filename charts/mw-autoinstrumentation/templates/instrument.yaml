@@ -29,14 +29,30 @@ spec:
         value: mw-service.{{ .Release.Namespace }}.svc.cluster.local
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://mw-service.{{ .Release.Namespace }}:9320
+      - name: MW_API_KEY
+        value: {{ or .Values.global.mw.apiKey "XXXXXX" | quote }}
+      - name: OTEL_PROPAGATORS
+        value: tracecontext,baggage,b3
+  nodejs:
+    env:
+      - name: OTEL_NODE_DISABLED_INSTRUMENTATIONS
+        value: fs,dns,net
+      - name: OTEL_PROPAGATORS
+        value: b3,tracecontext,baggage
   go:
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: http://mw-service.{{ .Release.Namespace }}:9320
+        value: http://mw-service.{{ .Release.Namespace }}:9319
+      - name: OTEL_EXPORTER_OTLP_PROTOCOL
+        value: grpc
+      - name: OTEL_PROPAGATORS
+        value: b3,tracecontext,baggage
   dotnet:
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://mw-service.{{ .Release.Namespace }}:9320
+      - name: OTEL_PROPAGATORS
+        value: b3,tracecontext,baggage
   java:
     env:
       - name: MW_AGENT_SERVICE
@@ -45,3 +61,7 @@ spec:
         value: http://mw-service.{{ .Release.Namespace }}:9319
       - name: OTEL_EXPORTER_OTLP_PROTOCOL
         value: grpc
+      - name: MW_API_KEY
+        value: {{ or .Values.global.mw.apiKey "XXXXXX" | quote }}
+      - name: OTEL_PROPAGATORS
+        value: tracecontext,baggage,b3
