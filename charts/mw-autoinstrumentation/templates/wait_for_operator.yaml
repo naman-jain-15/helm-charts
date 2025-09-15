@@ -25,6 +25,7 @@ spec:
             
             if ! echo "$response" | grep -q "Connection refused" > /dev/null; then
               echo "Webhook endpoint is available - no connection refused"
+              sleep 5
               exit 0
             fi
             echo "Waiting for operator webhook..."
