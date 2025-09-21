@@ -1,0 +1,80 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: {{ .Values.opsaiAutofix.name }}
+  namespace: {{.Release.Namespace}}
+spec:
+  selector:
+    matchLabels:
+      {{- include ".Values.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include ".Values.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - args:
+            - mw-agent
+            - start
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MW_TARGET
+              value: {{ or .Values.global.mw.target .Values.mw.target | quote }}
+            - name: MW_KUBE_CLUSTER_NAME
+              value: {{ or .Values.global.clusterMetadata.name .Values.clusterMetadata.name | quote }}
+            - name: MW_AGENT_GRPC_PORT
+              value: {{ .Values.service.grpc.targetPort | quote }}
+            - name: MW_AGENT_HTTP_PORT
+              value: {{ .Values.service.http.targetPort | quote }}
+            - name: MW_AGENT_FLUENT_PORT
+              value: {{ .Values.service.fluent.targetPort | quote }}
+            - name: MW_AGENT_INTERNAL_METRICS_PORT
+              value: {{ .Values.mw.agentInternalMetricsPort | quote }}
+            - name: MW_NAMESPACE
+              value: {{ .Release.Namespace | quote }}
+            - name: MW_AGENT_FEATURES_INFRA_MONITORING
+              value: {{ .Values.mw.agentFeatures.infraMonitoring | quote }}
+            - name: MW_AGENT_SELF_PROFILING
+              value: {{ .Values.mw.selfProfiling | quote }}
+            - name: MW_PROFILING_SERVER_URL
+              value: {{ .Values.mw.profilingServerUrl | quote }}
+            - name: MW_ENABLE_DATADOG_RECEIVER
+              value: {{ .Values.mw.enableDatadogReceiver | quote }}
+            - name: MW_AGENT_FEATURES_OPSAI_AUTOFIX
+              value: {{ .Values.opsaiAutofix.enabled | quote }}
+            - name: PULSAR_HOST
+              value: {{ .Values.opsaiAutofix.pulsarHost }}
+            - name: UNSUBSCRIBE_ENDPOINT
+              value: {{ .Values.opsaiAutofix.unsubscribeEndpoint }}
+            - name: ACCOUNT_UID
+              value: {{ regexReplaceAll "^https://([^\\.]+).*" .Values.global.mw.target "$1" | quote }}
+            - name: MW_AGENT_FEATURES_SYNTHETIC_MONITORING
+              value: {{ .Values.syntheticMonitoring.enabled | quote }}
+            - name: MW_API_URL_FOR_SYNTHETIC_MONITORING
+              value: {{ .Values.syntheticMonitoring.url }}
+            {{- if .Values.mw.apiKeyFromExistingSecret.enabled }}
+            - name: MW_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.mw.apiKeyFromExistingSecret.name }}
+                  key: {{ .Values.mw.apiKeyFromExistingSecret.key }}
+            {{- else }}
+            - name: MW_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: middleware-secret
+                  key: api-key
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          image: {{.Values.opsaiAutofix.repository}}:{{.Values.opsaiAutofix.tag}}
+          imagePullPolicy: {{.Values.opsaiAutofix.pullPolicy}}
+          name: {{ .Chart.Name }}
+      restartPolicy: Always
+      {{- if .Values.priorityClass.create }}
+      priorityClassName: {{ include "mw-kube-agent.priorityClassName" . }}
+      {{- end }}
+      serviceAccountName: {{ include "mw-kube-agent.serviceAccountName" . }}
