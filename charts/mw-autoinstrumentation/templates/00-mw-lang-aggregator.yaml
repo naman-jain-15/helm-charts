@@ -1,0 +1,79 @@
+{{- if eq .Values.mode "auto" }}
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: mw-lang-aggregator
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  selector:
+    matchLabels:
+      app: mw-lang-aggregator
+  template:
+    metadata:
+      labels:
+        app: mw-lang-aggregator
+        k8s-app: mw-app
+    spec:
+      containers:
+        - args:
+            - mw-lang-aggregator
+            - start
+          env:
+            - name: MW_TARGET
+              value: {{ or .Values.global.mw.target "XXXXXX" | quote }}
+            - name: MW_API_KEY
+              value: {{ or .Values.global.mw.apiKey "XXXXXX" | quote }}
+            - name: MW_KUBE_CLUSTER_NAME
+              value: {{ or .Values.global.clusterMetadata.name "unknown" | quote }}
+            - name: MW_RELEASE_NAMESPACE
+              value: {{ .Release.Namespace }}
+            - name: K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: MW_AUTOINSTRUMENTATION_SYNC_INTERVAL
+              value: "2m"
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi  
+          image: {{ .Values.mw.images.langAggregator.repository }}:{{ .Values.mw.images.langAggregator.tag }}
+          imagePullPolicy: {{ .Values.mw.images.pullPolicy }}
+          name: mw-lang-aggregator
+          resources: {}
+      restartPolicy: Always
+      serviceAccountName: mw-lang-detector
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mw-lang-aggregator
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app: mw-lang-aggregator
+spec:
+  selector:
+    app: mw-lang-aggregator
+  ports:
+    - port: {{ index .Values "mw" "langAggregatorService" "port" | default 8080 }}
+      targetPort: {{ index .Values "mw" "langAggregatorService" "targetPort" | default 8080 }}
+      protocol: TCP
+      name: http
+  type: {{ index .Values "mw" "langAggregatorService" "type" | default "ClusterIP" }}
+---
+# Configmap to signal mw-lang-detector-daemonset to restart and pick up new config
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mw-lang-aggregator-restart-signal
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app:  mw-lang-aggregator
+    component: lang-aggregator
+data:
+  restart_timestamp: {{ now | date "2006-01-02T15:04:05Z" | quote }}
+{{- end }}
+

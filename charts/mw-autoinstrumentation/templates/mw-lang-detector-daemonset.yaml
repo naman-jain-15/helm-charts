@@ -1,3 +1,4 @@
+{{- if eq .Values.mode "auto" }}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -31,6 +32,8 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
+          - name: MW_API_URL_FOR_LANG_AGGREGATOR
+            value: "http://mw-lang-aggregator.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }}:{{ .Values.mw.langAggregatorService.port }}"
         resources:
           limits:
             cpu: 200m
@@ -53,3 +56,4 @@ spec:
       - hostPath:
           path: /proc
         name: proc
+{{- end }}
