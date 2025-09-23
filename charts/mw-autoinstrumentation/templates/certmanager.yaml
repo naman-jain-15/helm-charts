@@ -1,3 +1,4 @@
+{{- if eq .Values.mode "auto" }}
 {{- if .Values.webhook.certManager.enabled }}
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -20,4 +21,5 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   selfSigned: {}
+{{- end }}
 {{- end }}

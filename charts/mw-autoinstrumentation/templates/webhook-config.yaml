@@ -1,6 +1,8 @@
 {{/*
 Store certificate data at the top level and reuse
 */}}
+{{- if eq .Values.mode "auto" }}
+
 {{- $certs := include "mw-auto-injector.webhook-certs" . | trim | fromYaml }}
 
 # Secret (only when needed)
@@ -62,3 +64,4 @@ webhooks:
     admissionReviewVersions: ["v1"]
     sideEffects: None
     timeoutSeconds: 5
+{{- end }}

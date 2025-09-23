@@ -5,16 +5,29 @@ global:
   clusterMetadata:
     name: "unknown"
   opentelemetryNamespace: opentelemetry-operator-system
-  
+# Instrumentation mode - determines how applications are instrumented
+# - "auto": Automatic language detection and injection (default) and supports manual injection also in case for custom requirements or lang not detected 
+#   Uses language detector to scan pods and automatically inject appropriate instrumentation
+# - "manual": Annotation-driven instrumentation only
+#   Disables automatic detection, users must add OpenTelemetry annotations to their deployments
+mode: "auto"  # Options: "auto" or "manual"  
 mw:
   images:
     pullPolicy: IfNotPresent
     langDetector:
       repository: ghcr.io/middleware-labs/mw-lang-detector
-      tag: 0.1.0
+      tag: 0.1.2
     autoInjector:
       repository: ghcr.io/middleware-labs/mw-auto-injector
+      tag: 0.1.1
+    langAggregator:
+      repository: ghcr.io/middleware-labs/mw-lang-aggregator
       tag: 0.1.0
+  # Only used in case of lang detector 
+  langAggregatorService:
+    port: 8080
+    targetPort: 8080
+    type: ClusterIP
 
 clusterDomain: cluster.local
 
