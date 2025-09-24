@@ -144,15 +144,30 @@ features:
 
 mw-autoinstrumentation:
   enabled: false
+  # Instrumentation mode - determines how applications are instrumented
+  # - "auto": Automatic language detection and injection (default) and supports manual injection also in case for custom requirements or lang not detected 
+  #   Uses language detector to scan pods and automatically inject appropriate instrumentation
+  # - "manual": Annotation-driven instrumentation only
+  #   Disables automatic detection, users must add OpenTelemetry annotations to their deployments
+  mode: "auto"  # Options: "auto" or "manual"
+  # Skip SELinux process label operations that may fail on read-only /proc
+  skipSELinuxLabeling: true  # Default: true to avoid the error
   mw:
     images:
       pullPolicy: IfNotPresent
       langDetector:
         repository: ghcr.io/middleware-labs/mw-lang-detector
-        tag: 0.1.1
+        tag: 0.1.2
       autoInjector:
         repository: ghcr.io/middleware-labs/mw-auto-injector
+        tag: 0.1.1
+      langAggregator:
+        repository: ghcr.io/middleware-labs/mw-lang-aggregator
         tag: 0.1.0
+    langAggregatorService:
+      port: 8080
+      targetPort: 8080
+      type: ClusterIP
 
   clusterMetadata:
     name: "unknown"
