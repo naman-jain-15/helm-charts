@@ -10,7 +10,9 @@ global:
 #   Uses language detector to scan pods and automatically inject appropriate instrumentation
 # - "manual": Annotation-driven instrumentation only
 #   Disables automatic detection, users must add OpenTelemetry annotations to their deployments
-mode: "auto"  # Options: "auto" or "manual"  
+mode: "auto"  # Options: "auto" or "manual"
+# Skip SELinux process label operations that may fail on read-only /proc
+skipSELinuxLabeling: true  # Default: true to avoid the error
 mw:
   images:
     pullPolicy: IfNotPresent

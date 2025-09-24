@@ -47,7 +47,9 @@ spec:
         - mountPath: /proc
           mountPropagation: None
           name: proc
+          {{- if .Values.skipSELinuxLabeling }}
           readOnly: true
+          {{- end }}
       hostPID: true
       securityContext:
         runAsUser: 0
