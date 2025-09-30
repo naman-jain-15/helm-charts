@@ -1,4 +1,6 @@
 {{- if .Values.rbac.create -}}
+{{- if .Values.opsaiAutofix.enabled }}
+{{- if .Values.rbac.create -}}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -12,4 +14,5 @@ subjects:
   - kind: ServiceAccount
     name: {{.Values.opsaiAutofix.serviceAccount.name }}
     namespace: {{ .Release.Namespace }}
+{{- end }}
 {{- end }}
