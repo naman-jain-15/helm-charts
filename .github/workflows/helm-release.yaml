@@ -28,13 +28,46 @@ jobs:
         uses: azure/setup-helm@v1
         with:
           version: v3.8.1
+
+      - name: Check changes for mw-autoinstrumentation
+        id: check-mw-autoinstrumentation
+        run: |
+          if git diff --name-only HEAD^ HEAD | grep -q "^charts/mw-autoinstrumentation/"; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "mw-autoinstrumentation chart has changes"
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "mw-autoinstrumentation chart has no changes"
+          fi
+
+      - name: Check changes for mw-kube-agent-v3
+        id: check-mw-kube-agent-v3
+        run: |
+          if git diff --name-only HEAD^ HEAD | grep -q "^charts/mw-kube-agent-v3/"; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "second-chart has changes"
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "second-chart has no changes"
+          fi
       
       - name: Build Helm dependencies
         run: |
           helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
           helm repo add middleware https://helm.middleware.io
           helm repo update
+      
+      - name: Build mw-autoinstrumentation dependencies
+        if: steps.check-mw-autoinstrumentation.outputs.changed == 'true'
+        run: |
+          echo "Building dependencies for mw-autoinstrumentation..."
           helm dependency build charts/mw-autoinstrumentation
+
+      - name: Build mw-kube-agent-v3 dependencies
+        if: steps.check-mw-kube-agent-v3.outputs.changed == 'true'
+        run: |
+          echo "Building dependencies for mw-kube-agent-v3..."
+          helm dependency build charts/mw-kube-agent-v3
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.7.0
