@@ -1,11 +1,11 @@
-{{- if .Values.opsaiAutofix.enabled }}
+{{- if .Values.opsai.enabled }}
 {{- if .Values.rbac.create -}}
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   labels:
     {{- include "mw-kube-agent.labels" . | nindent 4 }}
-  name: {{ .Values.opsaiAutofix.clusterRole.name }}
+  name: {{ .Values.opsai.clusterRole.name }}
   namespace: {{ .Release.Namespace }}
 rules:
   - verbs:

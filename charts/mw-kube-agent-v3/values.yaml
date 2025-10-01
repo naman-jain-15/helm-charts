@@ -52,7 +52,7 @@ syntheticMonitoring:
   url: wss://app.middleware.io:443/plsrws/v2
   unsubscribeEndpoint : https://app.middleware.io/api/v1/synthetics/unsubscribe
   
-opsaiAutofix:
+opsai:
   name: opsai
   repository: ghcr.io/middleware-labs/mw-kube-agent-opsai
   pullPolicy: IfNotPresent

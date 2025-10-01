@@ -33,9 +33,9 @@ spec:
             - name: MW_PROFILING_SERVER_URL
               value: {{ .Values.mw.profilingServerUrl | quote }}
             - name: PULSAR_HOST
-              value: {{ .Values.opsaiAutofix.pulsarHost }}
+              value: {{ .Values.opsai.pulsarHost }}
             - name: UNSUBSCRIBE_ENDPOINT
-              value: {{ .Values.opsaiAutofix.unsubscribeEndpoint }}
+              value: {{ .Values.opsai.unsubscribeEndpoint }}
             - name: ACCOUNT_UID
               value: {{ regexReplaceAll "^https://([^\\.]+).*" .Values.global.mw.target "$1" | quote }}
             - name: MW_AGENT_FEATURES_SYNTHETIC_MONITORING

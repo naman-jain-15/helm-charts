@@ -1,8 +1,8 @@
-{{- if .Values.opsaiAutofix.enabled }}
+{{- if .Values.opsai.enabled }}
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: {{ .Values.opsaiAutofix.name }}
+  name: {{ .Values.opsai.name }}
   namespace: {{.Release.Namespace}}
 spec:
   selector:
@@ -33,11 +33,11 @@ spec:
             - name: MW_PROFILING_SERVER_URL
               value: {{ .Values.mw.profilingServerUrl | quote }}
             - name: MW_AGENT_FEATURES_OPSAI_AUTOFIX
-              value: {{ .Values.opsaiAutofix.enabled | quote }}
+              value: {{ .Values.opsai.enabled | quote }}
             - name: PULSAR_HOST
-              value: {{ .Values.opsaiAutofix.pulsarHost }}
+              value: {{ .Values.opsai.pulsarHost }}
             - name: UNSUBSCRIBE_ENDPOINT
-              value: {{ .Values.opsaiAutofix.unsubscribeEndpoint }}
+              value: {{ .Values.opsai.unsubscribeEndpoint }}
             - name: ACCOUNT_UID
               value: {{ regexReplaceAll "^https://([^\\.]+).*" .Values.global.mw.target "$1" | quote }}
             - name: MW_AGENT_FEATURES_SYNTHETIC_MONITORING
@@ -64,9 +64,9 @@ spec:
             requests:
               cpu: 100m
               memory: 64Mi
-          image: {{.Values.opsaiAutofix.repository}}:{{.Values.opsaiAutofix.tag}}
-          imagePullPolicy: {{.Values.opsaiAutofix.pullPolicy}}
+          image: {{.Values.opsai.repository}}:{{.Values.opsai.tag}}
+          imagePullPolicy: {{.Values.opsai.pullPolicy}}
           name: {{ .Chart.Name }}
       restartPolicy: Always
-      serviceAccountName: {{ .Values.opsaiAutofix.serviceAccount.name }}
+      serviceAccountName: {{ .Values.opsai.serviceAccount.name }}
 {{- end }}
