@@ -294,7 +294,7 @@ mw-autoinstrumentation:
           tag: "0.53.0"
         python:
           repository: "ghcr.io/middleware-labs/opentelemetry-operator/autoinstrumentation-python"
-          tag: "2.4.0"
+          tag: "2.4.1-k8s"
         dotnet:
           repository: ""
           tag: ""
