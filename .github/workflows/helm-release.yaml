@@ -5,8 +5,6 @@ on:
   push:
     branches:
       - master
-    paths:
-      - 'charts/mw-kube-agent-v3/**'
 
 jobs:
   release:
@@ -36,11 +34,11 @@ jobs:
           helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
           helm repo add middleware https://helm.middleware.io
           helm repo update
-          helm dependency build charts/mw-kube-agent-v3
+          helm dependency build charts/mw-autoinstrumentation
 
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.4.0
+        uses: helm/chart-releaser-action@v1.7.0
         with:
-          charts_dir: charts/mw-kube-agent-v3
+          charts_dir: charts
         env:
           CR_TOKEN: "${{ secrets.GIT_HELM_TOKEN }}"
