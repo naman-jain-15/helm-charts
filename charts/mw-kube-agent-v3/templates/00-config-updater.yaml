@@ -46,6 +46,20 @@ spec:
           image: "{{ .Values.configUpdaterImage.repository }}:{{ .Values.configUpdaterImage.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.configUpdaterImage.pullPolicy }}
           name: mw-kube-agent-config-updater
-          resources: {}
+          securityContext:
+            privileged: false
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            limits:
+              cpu: 100m
+              memory: 64Mi
+            requests:
+              cpu: 50m
+              memory: 32Mi
       restartPolicy: Always
       serviceAccountName: mw-service-account-update
