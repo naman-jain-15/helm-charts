@@ -32,10 +32,10 @@ spec:
               value: {{ .Values.mw.selfProfiling | quote }}
             - name: MW_PROFILING_SERVER_URL
               value: {{ .Values.mw.profilingServerUrl | quote }}
-            - name: PULSAR_HOST
-              value: {{ .Values.opsai.pulsarHost }}
-            - name: UNSUBSCRIBE_ENDPOINT
-              value: {{ .Values.opsai.unsubscribeEndpoint }}
+            - name: MW_SYNTHETIC_MONITORING_API_URL
+              value: { .Values.syntheticMonitoring.url }}
+            - name: MW_SYNTHETIC_MONITORING_UNSUBSCRIBE_ENDPOINT
+              value: {{ .Values.syntheticMonitoring.unsubscribeEndpoint }}
             - name: ACCOUNT_UID
               value: {{ regexReplaceAll "^https://([^\\.]+).*" .Values.global.mw.target "$1" | quote }}
             - name: MW_AGENT_FEATURES_SYNTHETIC_MONITORING

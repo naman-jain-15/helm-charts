@@ -34,9 +34,9 @@ spec:
               value: {{ .Values.mw.profilingServerUrl | quote }}
             - name: MW_AGENT_FEATURES_OPSAI_AUTOFIX
               value: {{ .Values.opsai.enabled | quote }}
-            - name: PULSAR_HOST
+            - name: MW_OPSAI_API_URL
               value: {{ .Values.opsai.pulsarHost }}
-            - name: UNSUBSCRIBE_ENDPOINT
+            - name: MW_OPSAI_UNSUBSCRIBE_ENDPOINT
               value: {{ .Values.opsai.unsubscribeEndpoint }}
             - name: ACCOUNT_UID
               value: {{ regexReplaceAll "^https://([^\\.]+).*" .Values.global.mw.target "$1" | quote }}
