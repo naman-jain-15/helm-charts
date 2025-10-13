@@ -8,7 +8,7 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{.Values.clusterRole.name}}
+  name: {{.Values.opsai.clusterRole.name}}
 subjects:
   - kind: ServiceAccount
     name: {{.Values.opsai.serviceAccount.name }}
