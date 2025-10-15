@@ -155,6 +155,13 @@ targetAllocatorConfigs:
 providers:
   gke:
     autopilot: false
+  eks:
+    fargate:
+      enabled: false
+      createNamespace: true  # Set to false if namespace already exists
+      logRouter:
+        enabled: false
+        createConfigMap: true # Set to false if custom Configmap already exists
 
 features:
   # For Kubelet based metrics i.e. k8s.pod.cpu.time, k8s.pod.cpu.utilization, etc.

@@ -1,0 +1,85 @@
+{{- if and .Values.providers.eks.fargate.enabled .Values.providers.eks.fargate.logRouter.enabled }}
+{{- if .Values.providers.eks.fargate.logRouter.createConfigMap }}
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: aws-logging
+  namespace: aws-observability
+data:
+  filters.conf: |
+    [FILTER]
+      Name parser
+      Match *
+      Key_name log
+      Parser crio
+    [FILTER]
+      Name modify
+      Match *
+      Add kube_cluster_name {{ or .Values.global.clusterMetadata.name .Values.clusterMetadata.name }}
+      Rename log message
+    [FILTER]
+      Name kubernetes
+      Match kube.*
+      Merge_Log On
+      Keep_Log Off
+      K8S-Logging.Parser On
+      K8S-Logging.Exclude On
+    [FILTER]
+      Name modify
+      Match *
+      Condition Key_value_matches message (?i)(error|failure|failed|exception|panic)
+      Add log_level ERROR
+    [FILTER]
+      Name modify
+      Match *
+      Condition Key_value_matches message (?i)(warn|warning)
+      Add log_level WARNING
+    [FILTER]
+      Name modify
+      Match *
+      Condition Key_value_does_not_match message (?i)(error|failure|failed|exception|panic|warn|warning)
+      Add log_level INFO
+    [FILTER]
+      Name nest
+      Match *
+      Operation lift
+      Nested_under kubernetes
+      Add_prefix kubernetes_
+    [FILTER]
+      Name nest
+      Match *
+      Operation lift
+      Nested_under kubernetes_labels
+      Add_prefix kubernetes_labels_
+    [FILTER]
+      Name nest
+      Match *
+      Operation lift
+      Nested_under kubernetes_annotations
+      Add_prefix kubernetes_annotations_
+      
+  output.conf: |
+    [OUTPUT]
+      Name es
+      Match *
+      Host {{ regexReplaceAll "^https?://([^:/]+).*" .Values.global.mw.target "${1}" }}
+      Path /es
+      Port 443
+      Index fargate-logs
+      Type _doc
+      tls On
+      tls.verify Off
+      Retry_Limit 5
+      Trace_Output On
+      HTTP_User elastic
+      HTTP_Passwd {{ or .Values.global.mw.apiKey "XXXXXX" }}
+
+  parsers.conf: |
+    [PARSER]
+      Name   crio
+      Format regex
+      Regex  ^(?<time>[^ ]+) +(?<stream>stdout|stderr) +(?<logtag>F|P) +(?<log>.*)$
+      Time_Key time
+      Time_Format %Y-%m-%dT%H:%M:%S.%L%z
+{{- end }}
+{{- end }}
