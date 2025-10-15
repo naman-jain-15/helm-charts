@@ -28,6 +28,18 @@ spec:
         effect: NoSchedule
       - operator: Exists
         effect: NoExecute
+      {{- if .Values.providers.eks.fargate.enabled }}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: eks.amazonaws.com/compute-type
+                operator: NotIn
+                values:
+                - fargate
+      {{- end }}
+
       {{- if .Values.features.enableHostMonitoring }}
       hostNetwork: true
       hostPID: true

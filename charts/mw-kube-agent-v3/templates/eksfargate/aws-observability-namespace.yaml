@@ -1,0 +1,10 @@
+{{- if and .Values.providers.eks.fargate.enabled .Values.providers.eks.fargate.logRouter.enabled }}
+{{- if .Values.providers.eks.fargate.createNamespace }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: aws-observability
+  labels:
+    aws-observability: enabled
+{{- end }}
+{{- end }}
