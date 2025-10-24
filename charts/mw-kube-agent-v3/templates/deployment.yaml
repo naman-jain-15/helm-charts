@@ -44,7 +44,7 @@ spec:
             - /app/otel-config-deployment.yaml
           volumeMounts:
             - name: mw-deployment-otel-config-volume
-              mountPath: /app
+              mountPath: /appp
           env:
             - name: POD_NAME
               valueFrom:
