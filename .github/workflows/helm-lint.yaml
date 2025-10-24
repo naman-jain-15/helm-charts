@@ -95,9 +95,15 @@ jobs:
           # Check if this chart's files were changed
           if echo "$CHANGED_FILES" | grep -E "^$CHART_PATH/" > /dev/null; then
             echo "📁 Files changed in $CHART_PATH/"
-            
+
             # Check if version was bumped
-            OLD_VERSION=$(git show HEAD~1:$CHART_PATH/Chart.yaml | grep '^version:' | awk '{print $2}')
+            # For PRs: compare against base branch
+            # For pushes: compare against previous commit
+            if [ "${{ github.event_name }}" = "pull_request" ]; then
+              OLD_VERSION=$(git show ${{ github.event.pull_request.base.sha }}:$CHART_PATH/Chart.yaml | grep '^version:' | awk '{print $2}')
+            else
+              OLD_VERSION=$(git show HEAD~1:$CHART_PATH/Chart.yaml | grep '^version:' | awk '{print $2}')
+            fi
             NEW_VERSION=$(grep '^version:' $CHART_PATH/Chart.yaml | awk '{print $2}')
             
             echo "Previous version: $OLD_VERSION"
