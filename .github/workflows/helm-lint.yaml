@@ -63,7 +63,7 @@ jobs:
             echo "Changed charts: ${CHANGED_CHARTS[*]}"
           fi
 
-  test:
+  lint-charts:
     needs: detect-changes
     if: needs.detect-changes.outputs.matrix != '{"include":[]}'
     runs-on: ubuntu-latest
