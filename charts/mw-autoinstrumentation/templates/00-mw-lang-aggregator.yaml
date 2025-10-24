@@ -28,7 +28,7 @@ spec:
             - name: MW_RELEASE_NAMESPACE
               value: {{ .Release.Namespace }}
             - name: TRY
-              value: "ABC"
+              value: "ABCD"
             - name: K8S_NODE_NAME
               valueFrom:
                 fieldRef:

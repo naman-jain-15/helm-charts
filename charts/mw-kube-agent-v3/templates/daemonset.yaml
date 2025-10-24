@@ -6,7 +6,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      {- include ".Values.selectorLabels" . | nindent 6 }}
+      {{- include ".Values.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
