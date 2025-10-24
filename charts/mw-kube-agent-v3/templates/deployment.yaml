@@ -46,7 +46,7 @@ spec:
             - name: mw-deployment-otel-config-volume
               mountPath: /appp
           env:
-            - name: POD_NAME
+            - name: POD_NAMEf
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
