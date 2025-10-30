@@ -85,17 +85,7 @@ jobs:
       - name: Update Helm dependencies
         run: |
           helm dependency update ./charts/${{ matrix.chart }}
-      
-      - name: Debug secrets availability
-        run: |
-          echo "MW_API_KEY length: ${#MW_API_KEY}"
-          echo "MW_TARGET length: ${#MW_TARGET}"
-          if [ -z "$MW_API_KEY" ]; then echo "MW_API_KEY is empty"; fi
-          if [ -z "$MW_TARGET" ]; then echo "MW_TARGET is empty"; fi
-        env:
-          MW_API_KEY: ${{ secrets.MW_API_KEY }}
-          MW_TARGET: ${{ secrets.MW_TARGET }}
-
+    
       - name: Install Helm Chart
         run: |
           helm install ${{ matrix.chart }}-test ./charts/${{ matrix.chart }} \
@@ -136,16 +126,20 @@ jobs:
           kubectl get pods -n mw-agent-ns -o wide
           
           # Check for any non-running pods
-          FAILED_PODS=$(kubectl get pods -n mw-agent-ns --field-selector=status.phase!=Running,status.phase!=Succeeded -o jsonpath='{.items[*].metadata.name}' 2>/dev/null || echo "")
-          
+          FAILED_PODS=$(kubectl get pods -n mw-agent-ns -o jsonpath='{range .items[*]}{.metadata.name}{" "}{.status.phase}{" "}{.status.containerStatuses[0].ready}{"\n"}{end}' | awk '$2!="Running" && $2!="Succeeded" || $3=="false" {print $1}')
+
           if [ -n "$FAILED_PODS" ]; then
-            echo "❌ The following pods are not in Running/Succeeded state: $FAILED_PODS"
+            echo "❌ The following pods are not healthy: $FAILED_PODS"
             echo ""
             echo "Pod details:"
-            kubectl describe pods -n mw-agent-ns $FAILED_PODS
+            for pod in $FAILED_PODS; do
+              echo "=== Pod: $pod ==="
+              kubectl describe pod -n mw-agent-ns $pod
+              echo ""
+            done
             exit 1
           else
-            echo "✅ All pods are in Running/Succeeded state in namespace mw-agent-ns"
+            echo "✅ All pods are healthy in namespace mw-agent-ns"
           fi
 
       - name: Sleep before cleanup
