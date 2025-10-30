@@ -85,6 +85,16 @@ jobs:
       - name: Update Helm dependencies
         run: |
           helm dependency update ./charts/${{ matrix.chart }}
+      
+      - name: Debug secrets availability
+        run: |
+          echo "MW_API_KEY length: ${#MW_API_KEY}"
+          echo "MW_TARGET length: ${#MW_TARGET}"
+          if [ -z "$MW_API_KEY" ]; then echo "MW_API_KEY is empty"; fi
+          if [ -z "$MW_TARGET" ]; then echo "MW_TARGET is empty"; fi
+        env:
+          MW_API_KEY: ${{ secrets.MW_API_KEY }}
+          MW_TARGET: ${{ secrets.MW_TARGET }}
 
       - name: Install Helm Chart
         run: |
@@ -93,13 +103,16 @@ jobs:
             --set global.mw.target=${{ secrets.MW_TARGET }} \
             --set global.clusterMetadata.name=integration-test-cluster \
             --namespace mw-agent-ns --create-namespace
+        env:
+          MW_API_KEY: ${{ secrets.MW_API_KEY }}
+          MW_TARGET: ${{ secrets.MW_TARGET }}
 
       - name: Wait for Pods to be ready
         run: sleep 120
       
       - name: Check Pod status
         run: |
-          kubectl get pods -n ${{ matrix.chart }}-test
+          kubectl get pods -n mw-agent-ns
 
       - name: Print logs for chart pods
         run: |
@@ -141,5 +154,5 @@ jobs:
       - name: Cleanup
         if: always()
         run: |
-          helm uninstall ${{ matrix.chart }}-test -n ${{ matrix.chart }}-test || echo "Failed to uninstall"
+          helm uninstall ${{ matrix.chart }}-test -n mw-agent-ns || echo "Failed to uninstall"
           kubectl delete namespace mw-agent-ns || echo "Failed to delete namespace"
