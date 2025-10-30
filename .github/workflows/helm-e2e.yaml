@@ -85,7 +85,7 @@ jobs:
       - name: Update Helm dependencies
         run: |
           helm dependency update ./charts/${{ matrix.chart }}
-
+    
       - name: Install Helm Chart
         run: |
           helm install ${{ matrix.chart }}-test ./charts/${{ matrix.chart }} \
@@ -93,13 +93,16 @@ jobs:
             --set global.mw.target=${{ secrets.MW_TARGET }} \
             --set global.clusterMetadata.name=integration-test-cluster \
             --namespace mw-agent-ns --create-namespace
+        env:
+          MW_API_KEY: ${{ secrets.MW_API_KEY }}
+          MW_TARGET: ${{ secrets.MW_TARGET }}
 
       - name: Wait for Pods to be ready
         run: sleep 120
       
       - name: Check Pod status
         run: |
-          kubectl get pods -n ${{ matrix.chart }}-test
+          kubectl get pods -n mw-agent-ns
 
       - name: Print logs for chart pods
         run: |
@@ -123,16 +126,20 @@ jobs:
           kubectl get pods -n mw-agent-ns -o wide
           
           # Check for any non-running pods
-          FAILED_PODS=$(kubectl get pods -n mw-agent-ns --field-selector=status.phase!=Running,status.phase!=Succeeded -o jsonpath='{.items[*].metadata.name}' 2>/dev/null || echo "")
-          
+          FAILED_PODS=$(kubectl get pods -n mw-agent-ns -o jsonpath='{range .items[*]}{.metadata.name}{" "}{.status.phase}{" "}{.status.containerStatuses[0].ready}{"\n"}{end}' | awk '$2!="Running" && $2!="Succeeded" || $3=="false" {print $1}')
+
           if [ -n "$FAILED_PODS" ]; then
-            echo "❌ The following pods are not in Running/Succeeded state: $FAILED_PODS"
+            echo "❌ The following pods are not healthy: $FAILED_PODS"
             echo ""
             echo "Pod details:"
-            kubectl describe pods -n mw-agent-ns $FAILED_PODS
+            for pod in $FAILED_PODS; do
+              echo "=== Pod: $pod ==="
+              kubectl describe pod -n mw-agent-ns $pod
+              echo ""
+            done
             exit 1
           else
-            echo "✅ All pods are in Running/Succeeded state in namespace mw-agent-ns"
+            echo "✅ All pods are healthy in namespace mw-agent-ns"
           fi
 
       - name: Sleep before cleanup
@@ -141,5 +148,5 @@ jobs:
       - name: Cleanup
         if: always()
         run: |
-          helm uninstall ${{ matrix.chart }}-test -n ${{ matrix.chart }}-test || echo "Failed to uninstall"
+          helm uninstall ${{ matrix.chart }}-test -n mw-agent-ns || echo "Failed to uninstall"
           kubectl delete namespace mw-agent-ns || echo "Failed to delete namespace"
