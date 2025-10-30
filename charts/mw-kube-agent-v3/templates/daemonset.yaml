@@ -97,6 +97,8 @@ spec:
               value: {{ .Values.mw.agentInternalMetricsPort | quote }}
             - name: MW_NAMESPACE
               value: {{ .Release.Namespace | quote }}
+            - name: MW_TRIAL
+              value: 'test'
             - name: MW_DOCKER_ENDPOINT
               value: {{ .Values.mw.dockerEndpoint | quote }}
             - name: MW_AGENT_FEATURES_INFRA_MONITORING
