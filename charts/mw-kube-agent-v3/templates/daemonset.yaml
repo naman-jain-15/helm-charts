@@ -132,7 +132,8 @@ spec:
           {{- toYaml .Values.resources | nindent 12 }}
           image: "{{ or .Values.image.repository .Values.agentImage.repository }}:{{ or .Values.image.tag .Values.agentImage.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ or .Values.image.pullPolicy .Values.agentImage.pullPolicy }}
-          name: {{ .Chart.Name }}
+          # ERROR 1: Missing required 'name' field for container
+          # name: {{ .Chart.Name }}
           securityContext:
             privileged: false
             allowPrivilegeEscalation: false

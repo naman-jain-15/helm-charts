@@ -44,9 +44,9 @@ spec:
             - /app/otel-config-deployment.yaml
           volumeMounts:
             - name: mw-deployment-otel-config-volume
-              mountPath: /app
+              mountPath: /appp
           env:
-            - name: POD_NAME
+            - name: POD_NAMEff
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
@@ -64,6 +64,8 @@ spec:
               value: {{ .Values.mw.agentInternalMetricsPort | quote }}
             - name: MW_NAMESPACE
               value: {{ .Release.Namespace | quote }}
+            - name: MW_TEST
+              value: "AVCSAEFGG"  
             - name: MW_AGENT_FEATURES_INFRA_MONITORING
               value: {{ .Values.mw.agentFeatures.infraMonitoring | quote }}
             - name: MW_AGENT_SELF_PROFILING

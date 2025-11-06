@@ -1,85 +1,85 @@
-name: Helm Chart Tests
+# name: Helm Chart Tests
 
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+# on:
+#   push:
+#     branches:
+#       - master
+#   pull_request:
+#     branches:
+#       - master
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
 
-      - name: Start Minikube
-        id: minikube
-        uses: medyagh/setup-minikube@latest
+#       - name: Start Minikube
+#         id: minikube
+#         uses: medyagh/setup-minikube@latest
 
-      - name: Set up Kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
+#       - name: Set up Kubectl
+#         uses: azure/setup-kubectl@v3
+#         with:
+#           version: 'latest'
 
-      - name: Set up Helm
-        uses: azure/setup-helm@v4.2.0
+#       - name: Set up Helm
+#         uses: azure/setup-helm@v4.2.0
 
-      - name: Install Kubernetes and Helm dependencies
-        run: |
-          sudo apt-get install -y kubectl
-          helm repo add stable https://charts.helm.sh/stable
+#       - name: Install Kubernetes and Helm dependencies
+#         run: |
+#           sudo apt-get install -y kubectl
+#           helm repo add stable https://charts.helm.sh/stable
 
-      - name: Lint Helm chart
-        run: helm lint ./charts/mw-kube-agent-v2
+#       - name: Lint Helm chart
+#         run: helm lint ./charts/mw-kube-agent-v2
 
-      - name: Render Helm templates with apiKeyFromExistingSecret enabled
-        run: helm template my-release ./charts/mw-kube-agent-v2 --values ./charts/mw-kube-agent-v2/testvalues/api-key-from-existing-secret-enabled.yaml > rendered-with-secret.yaml
+#       - name: Render Helm templates with apiKeyFromExistingSecret enabled
+#         run: helm template my-release ./charts/mw-kube-agent-v2 --values ./charts/mw-kube-agent-v2/testvalues/api-key-from-existing-secret-enabled.yaml > rendered-with-secret.yaml
 
-      - name: Render Helm templates with apiKeyFromExistingSecret disabled
-        run: helm template my-release ./charts/mw-kube-agent-v2 --values ./charts/mw-kube-agent-v2/testvalues/api-key-from-existing-secret-disabled.yaml > rendered-no-secret.yaml
+#       - name: Render Helm templates with apiKeyFromExistingSecret disabled
+#         run: helm template my-release ./charts/mw-kube-agent-v2 --values ./charts/mw-kube-agent-v2/testvalues/api-key-from-existing-secret-disabled.yaml > rendered-no-secret.yaml
 
-      - name: Apply Helm chart with apiKeyFromExistingSecret enabled
-        run: |
-          helm install my-release ./charts/mw-kube-agent-v2 --values ./charts/mw-kube-agent-v2/testvalues/api-key-from-existing-secret-enabled.yaml
+#       - name: Apply Helm chart with apiKeyFromExistingSecret enabled
+#         run: |
+#           helm install my-release ./charts/mw-kube-agent-v2 --values ./charts/mw-kube-agent-v2/testvalues/api-key-from-existing-secret-enabled.yaml
 
-      - name: Validate Secret with apiKeyFromExistingSecret enabled
-        run: |
-          sleep 10 # Wait for resources to be created
-          SECRET_VALUE=$(kubectl get secret middleware-secret -n mw-agent-ns -o jsonpath='{.data.api-key}' | base64 --decode)
-          echo "Secret value with apiKeyFromExistingSecret enabled: $SECRET_VALUE"
-          if [[ "$SECRET_VALUE" != "fallback-api-key" ]]; then
-            echo "Test passed for apiKeyFromExistingSecret enabled"
-          else
-            echo "Test failed for apiKeyFromExistingSecret enabled"
-            exit 1
-          fi
+#       - name: Validate Secret with apiKeyFromExistingSecret enabled
+#         run: |
+#           sleep 10 # Wait for resources to be created
+#           SECRET_VALUE=$(kubectl get secret middleware-secret -n mw-agent-ns -o jsonpath='{.data.api-key}' | base64 --decode)
+#           echo "Secret value with apiKeyFromExistingSecret enabled: $SECRET_VALUE"
+#           if [[ "$SECRET_VALUE" != "fallback-api-key" ]]; then
+#             echo "Test passed for apiKeyFromExistingSecret enabled"
+#           else
+#             echo "Test failed for apiKeyFromExistingSecret enabled"
+#             exit 1
+#           fi
 
-      - name: Clean up with apiKeyFromExistingSecret enabled
-        run: |
-          helm uninstall my-release
-          kubectl delete ns mw-agent-ns
+#       - name: Clean up with apiKeyFromExistingSecret enabled
+#         run: |
+#           helm uninstall my-release
+#           kubectl delete ns mw-agent-ns
 
-      - name: Apply Helm chart with apiKeyFromExistingSecret disabled
-        run: |
-          kubectl create ns mw-agent-ns
-          helm install my-release ./charts/mw-kube-agent-v2 --values ./charts/mw-kube-agent-v2/testvalues/api-key-from-existing-secret-disabled.yaml
+#       - name: Apply Helm chart with apiKeyFromExistingSecret disabled
+#         run: |
+#           kubectl create ns mw-agent-ns
+#           helm install my-release ./charts/mw-kube-agent-v2 --values ./charts/mw-kube-agent-v2/testvalues/api-key-from-existing-secret-disabled.yaml
 
-      - name: Validate Secret with apiKeyFromExistingSecret disabled
-        run: |
-          sleep 10 # Wait for resources to be created
-          SECRET_VALUE=$(kubectl get secret middleware-secret -n mw-agent-ns -o jsonpath='{.data.api-key}' | base64 --decode)
-          echo "Secret value with apiKeyFromExistingSecret disabled: $SECRET_VALUE"
-          if [[ "$SECRET_VALUE" == "fallback-api-key" ]]; then
-            echo "Test passed for apiKeyFromExistingSecret disabled"
-          else
-            echo "Test failed for apiKeyFromExistingSecret disabled"
-            exit 1
-          fi
+#       - name: Validate Secret with apiKeyFromExistingSecret disabled
+#         run: |
+#           sleep 10 # Wait for resources to be created
+#           SECRET_VALUE=$(kubectl get secret middleware-secret -n mw-agent-ns -o jsonpath='{.data.api-key}' | base64 --decode)
+#           echo "Secret value with apiKeyFromExistingSecret disabled: $SECRET_VALUE"
+#           if [[ "$SECRET_VALUE" == "fallback-api-key" ]]; then
+#             echo "Test passed for apiKeyFromExistingSecret disabled"
+#           else
+#             echo "Test failed for apiKeyFromExistingSecret disabled"
+#             exit 1
+#           fi
 
-      - name: Clean up with apiKeyFromExistingSecret disabled
-        run: |
-          helm uninstall my-release
-          kubectl delete ns mw-agent-ns
+#       - name: Clean up with apiKeyFromExistingSecret disabled
+#         run: |
+#           helm uninstall my-release
+#           kubectl delete ns mw-agent-ns

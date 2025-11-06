@@ -27,6 +27,8 @@ spec:
               value: {{ or .Values.global.clusterMetadata.name "unknown" | quote }}
             - name: MW_RELEASE_NAMESPACE
               value: {{ .Release.Namespace }}
+            - name: TRY
+              value: "ABCD"
             - name: K8S_NODE_NAME
               valueFrom:
                 fieldRef:
